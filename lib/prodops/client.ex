@@ -59,4 +59,28 @@ defmodule ProdopsEx.Client do
     |> post(body, request_headers(config), request_options(config))
     |> handle_response()
   end
+
+  def query_params(request_options, [_ | _] = params) do
+    # The `request_options` may or may not be present, but the `params` are.
+    # Therefore we can guarantee to return a non-empty keyword list, so we cam
+    # modify the `request_options` unconditionnaly.
+    request_options
+    |> List.wrap()
+    |> Keyword.merge([params: params], fn :params, old_params, new_params ->
+      Keyword.merge(old_params, new_params)
+    end)
+  end
+
+  def query_params(request_options, _params), do: request_options
+
+  def api_get(path, params \\ [], config) do
+    request_options =
+      config
+      |> request_options()
+      |> query_params(params)
+
+    path
+    |> get(request_headers(config), request_options)
+    |> handle_response()
+  end
 end
