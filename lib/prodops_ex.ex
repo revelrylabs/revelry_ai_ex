@@ -3,16 +3,28 @@ defmodule ProdopsEx do
   Documentation for `ProdopsEx`.
   """
 
+  alias ProdopsEx.Validate
+
   @doc """
-  Hello world.
+  Validates the provided API key and return team information.
 
-  ## Examples
+  ## Parameters
 
-      iex> ProdopsEx.hello()
-      :world
+  - `config`: The configuration map containing the API key and endpoint URL.
 
+  ## Example
+  ```elixir
+  ProdopsEx.validate(
+    %ProdopsEx.Config{
+      bearer_token: "your_api_key_here",
+    }
+  )
+  ```
+
+  ## Returns
+  {:ok, %{status: "ok", response: %{"team_id" => 1, "team_name" => "ProdOps"}}}
   """
-  def hello do
-    :world
+  def validate_api_key(config) do
+    Validate.validate_api_key(config)
   end
 end
