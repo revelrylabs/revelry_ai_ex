@@ -9,6 +9,28 @@ defmodule ProdopsEx do
   alias ProdopsEx.Validate
 
   @doc """
+  Deletes an artifact by its ID.
+
+  ## Parameters
+
+  - `params`: The parameters for the artifact delete request.
+  - `config`: The configuration map containing the API key and endpoint URL.
+
+  ## Example
+  ```elixir
+  ProdopsEx.delete_artifact_by_id(
+    %{artifact_slug: "story", artifact_id: 1},
+    %ProdopsEx.Config{
+      bearer_token: "your_api_key_here",
+    }
+  )
+  ```
+  """
+  def delete_artifact_by_id(params, config) do
+    Artifacts.delete_artifact_by_id(params, config)
+  end
+
+  @doc """
   Retrieves artifacts for a given project.
 
   ## Parameters

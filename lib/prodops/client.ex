@@ -55,6 +55,12 @@ defmodule ProdopsEx.Client do
     |> handle_response()
   end
 
+  def api_delete(path, params \\ [], config) do
+    path
+    |> delete(request_headers(config), request_options(config, params))
+    |> handle_response()
+  end
+
   defp request_headers(config) do
     [
       {"Authorization", "Bearer #{config.bearer_token}"},

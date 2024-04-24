@@ -75,6 +75,27 @@ defmodule ProdopsEx.Artifacts do
     Client.api_get(endpoint, [], config)
   end
 
+  @doc """
+  Deletes an artifact by its ID.
+
+  ## Parameters
+
+  - `params`: The parameters for the artifact delete request.
+  - `config`: The configuration map containing the API key and endpoint URL.
+
+  ## Example
+
+      iex> ProdopsEx.delete_artifact_by_id(%{artifact_slug: "story", artifact_id: 1}, %ProdopsEx.Config{bearer_token: "your_api_key_here"})
+      {:ok,
+        %{status: "ok", response: %{"message" => "Artifact deleted successfully."}}}
+  """
+  @spec delete_artifact_by_id(map, %Config{}) :: {:ok, map} | {:error, any}
+  def delete_artifact_by_id(params, %Config{} = config) do
+    %{artifact_slug: artifact_slug, artifact_id: artifact_id} = params
+    endpoint = url(config) <> "/#{artifact_slug}/artifacts/#{artifact_id}"
+    Client.api_delete(endpoint, [], config)
+  end
+
   defp url(%Config{} = config) do
     config.api_url <> @base_path
   end
