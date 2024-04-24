@@ -44,7 +44,7 @@ defmodule ProdopsEx.Artifacts do
         }}
 
   ## Returns
-  The function should return a list of up to 5 artifacts for the specified project.
+  The function should return a list of artifacts for the specified project.
   """
   @spec get_artifacts_for_project(map, %Config{}) :: {:ok, list} | {:error, any}
   def get_artifacts_for_project(params, %Config{} = config) do
