@@ -4,6 +4,7 @@ defmodule ProdopsEx do
   """
 
   alias ProdopsEx.ArtifactType
+  alias ProdopsEx.Project
   alias ProdopsEx.Validate
 
   @doc """
@@ -56,5 +57,34 @@ defmodule ProdopsEx do
   """
   def list_artifact_types(config) do
     ArtifactType.list(config)
+  end
+
+  @doc """
+  Returns a list of all projects for a given team
+
+  ## Parameters
+
+  - `config`: The configuration map containing the API key and endpoint URL.
+
+  ## Example
+  ```elixir
+  ProdopsEx.list_projects(
+    %ProdopsEx.Config{
+      bearer_token: "your_api_key_here",
+    }
+  )
+  ```
+
+  ## Returns
+  {:ok, %{status: "ok", response: %{ "projects": [
+            {
+              "id": 1,
+              "name": "ProdOps",
+              "overview": "This is the project overview"
+            }
+  ]}}}
+  """
+  def list_projects(config) do
+    Project.list(config)
   end
 end
