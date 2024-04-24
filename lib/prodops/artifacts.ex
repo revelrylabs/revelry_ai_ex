@@ -48,11 +48,34 @@ defmodule ProdopsEx.Artifacts do
   """
   @spec get_artifacts_for_project(map, %Config{}) :: {:ok, list} | {:error, any}
   def get_artifacts_for_project(params, %Config{} = config) do
-    endpoint = url(params, config)
+    %{artifact_slug: artifact_slug, project_id: project_id} = params
+    endpoint = url(config) <> "/#{artifact_slug}/artifacts?project_id=#{project_id}"
     Client.api_get(endpoint, [], config)
   end
 
-  defp url(%{project_id: project_id, artifact_slug: artifact_slug}, %Config{} = config) do
-    config.api_url <> @base_path <> "/#{artifact_slug}/artifacts?project_id=#{project_id}"
+  @doc """
+  Retrieves an artifact by its ID.
+
+  ## Parameters
+
+  - `params`: The parameters for the artifact request.
+  - `config`: The configuration map containing the API key and endpoint URL.
+
+  ## Example
+
+      iex> ProdopsEx.get_artifact_by_id(%{artifact_slug: "story", artifact_id: 1}, %ProdopsEx.Config{bearer_token: "your_api_key_here"})
+      {:ok,
+
+        }
+  """
+  @spec get_artifact_by_id(map, %Config{}) :: {:ok, map} | {:error, any}
+  def get_artifact_by_id(params, %Config{} = config) do
+    %{artifact_slug: artifact_slug, artifact_id: artifact_id} = params
+    endpoint = url(config) <> "/#{artifact_slug}/artifacts/#{artifact_id}"
+    Client.api_get(endpoint, [], config)
+  end
+
+  defp url(%Config{} = config) do
+    config.api_url <> @base_path
   end
 end
