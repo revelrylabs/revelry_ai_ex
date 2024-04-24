@@ -29,7 +29,7 @@ defmodule ProdopsEx.Client do
       {:ok, %HTTPoison.Response{body: {:ok, body}}} ->
         {:error, body}
 
-      # html error responses
+      # HTML error responses
       {:ok, %HTTPoison.Response{status_code: status_code, body: body}} ->
         {:error, %{status_code: status_code, body: body}}
 
@@ -38,16 +38,11 @@ defmodule ProdopsEx.Client do
     end
   end
 
-  def request_headers(config) do
-    [
-      bearer(config),
-      {"Content-type", "application/json"}
-    ]
+  def api_get(path, params \\ [], config) do
+    path
+    |> get(request_headers(config), request_options(config, params))
+    |> handle_response()
   end
-
-  def bearer(config), do: {"Authorization", "Bearer #{config.bearer_token}"}
-
-  def request_options(config), do: config.http_options
 
   def api_post(path, params \\ [], config) do
     body =
@@ -56,31 +51,23 @@ defmodule ProdopsEx.Client do
       |> Jason.encode!()
 
     path
-    |> post(body, request_headers(config), request_options(config))
+    |> post(body, request_headers(config), request_options(config, params))
     |> handle_response()
   end
 
-  def query_params(request_options, [_ | _] = params) do
-    # The `request_options` may or may not be present, but the `params` are.
-    # Therefore we can guarantee to return a non-empty keyword list, so we cam
-    # modify the `request_options` unconditionnaly.
-    request_options
-    |> List.wrap()
-    |> Keyword.merge([params: params], fn :params, old_params, new_params ->
-      Keyword.merge(old_params, new_params)
-    end)
+  defp request_headers(config) do
+    [
+      {"Authorization", "Bearer #{config.bearer_token}"},
+      {"Content-type", "application/json"}
+    ]
   end
 
-  def query_params(request_options, _params), do: request_options
+  defp request_options(config, params) do
+    base_options = config.http_options
 
-  def api_get(path, params \\ [], config) do
-    request_options =
-      config
-      |> request_options()
-      |> query_params(params)
-
-    path
-    |> get(request_headers(config), request_options)
-    |> handle_response()
+    case params do
+      [] -> base_options
+      _ -> Keyword.put_new(base_options, :params, params)
+    end
   end
 end

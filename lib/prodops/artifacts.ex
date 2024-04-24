@@ -1,6 +1,6 @@
 defmodule ProdopsEx.Artifacts do
   @moduledoc """
-  Handles validation operations for the ProdOps API.
+  Handles artifact operations for the ProdOps API such as retrieving artifacts for a given project, creating artifacts, refining artifacts, and deleting artifacts.
   """
   alias ProdopsEx.Client
   alias ProdopsEx.Config

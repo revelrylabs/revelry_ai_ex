@@ -3,10 +3,10 @@ defmodule ProdopsEx do
   Documentation for `ProdopsEx`.
   """
 
+  alias ProdopsEx.Artifacts
   alias ProdopsEx.ArtifactType
   alias ProdopsEx.Project
   alias ProdopsEx.Validate
-  alias ProdopsEx.Artifacts
 
   @doc """
   Validates the provided API key and return team information.
