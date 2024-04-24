@@ -3,6 +3,7 @@ defmodule ProdopsEx do
   Documentation for `ProdopsEx`.
   """
 
+  alias ProdopsEx.Artifacts
   alias ProdopsEx.ArtifactType
   alias ProdopsEx.Project
   alias ProdopsEx.Validate
@@ -28,6 +29,28 @@ defmodule ProdopsEx do
   """
   def validate_api_key(config) do
     Validate.validate_api_key(config)
+  end
+
+  @doc """
+  Retrieves artifacts for a given project.
+
+  ## Parameters
+
+  - `params`: The parameters for the artifact request.
+  - `config`: The configuration map containing the API key and endpoint URL.
+
+  ## Example
+  ```
+  ProdopsEx.get_artifacts_for_project(
+    %{project_id: 212, artifact_slug: "story"},
+    %ProdopsEx.Config{
+      bearer_token: "your_api_key_here",
+    }
+  )
+  ```
+  """
+  def get_artifacts_for_project(params, config) do
+    Artifacts.get_artifacts_for_project(params, config)
   end
 
   @doc """

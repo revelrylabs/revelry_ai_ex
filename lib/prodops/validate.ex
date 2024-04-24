@@ -10,7 +10,11 @@ defmodule ProdopsEx.Validate do
   @doc """
   Validates the provided API key and returns team information.
 
-  ## Examples
+  ## Parameters
+
+  - `config`: The configuration map containing the API key and endpoint URL.
+
+  ## Example
 
       iex> ProdopsEx.Validate.validate_api_key(%ProdopsEx.Config{bearer_token: "your_api_key_here"})
       {:ok, %{status: "ok", response: %{"team_id" => 1, "team_name" => "ProdOps"}}}
