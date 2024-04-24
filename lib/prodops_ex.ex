@@ -206,6 +206,30 @@ defmodule ProdopsEx do
     Validate.validate_api_key(config)
   end
 
+  @doc """
+  Creates an artifact.
+
+  ## Parameters
+
+  - `config`: The configuration map containing the API key and any other configuration values.
+  - `params`: The parameters for the artifact request.
+
+  ## Example
+  ```
+  ProdopsEx.create_artifact(
+    %ProdopsEx.Config{
+      bearer_token: "your_api_key_here",
+    }
+    %{
+      project_id: 123,
+      slug: "story",
+      prompt_template_id: 123,
+      inputs: [
+        %{name: "Input", value: "Value"}
+      ]}
+  )
+  ```
+  """
   def create_artifact(config, params) do
     Artifact.create_artifact(config, params)
   end
