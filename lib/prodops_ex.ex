@@ -205,4 +205,8 @@ defmodule ProdopsEx do
   def validate_api_key(config) do
     Validate.validate_api_key(config)
   end
+
+  def create_artifact(config, params) do
+    Artifact.create_artifact(config, params)
+  end
 end
