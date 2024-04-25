@@ -207,30 +207,24 @@ defmodule ProdopsEx do
   end
 
   @doc """
-  Creates an artifact.
+  Refines an artifact.
 
   ## Parameters
 
-  - `config`: The configuration map containing the API key and any other configuration values.
   - `params`: The parameters for the artifact request.
+  - `config`: The configuration map containing the API key and any other configuration values.
 
   ## Example
   ```
-  ProdopsEx.create_artifact(
+  ProdopsEx.refine_artifact(
+    %{artifact_id: 123, artifact_slug: "story", refine_prompt: "Refine this story"},
     %ProdopsEx.Config{
       bearer_token: "your_api_key_here",
     }
-    %{
-      project_id: 123,
-      slug: "story",
-      prompt_template_id: 123,
-      inputs: [
-        %{name: "Input", value: "Value"}
-      ]}
   )
   ```
   """
-  def create_artifact(params, config) do
-    Artifact.create_artifact(params, config)
+  def refine_artifact(params, config) do
+    Artifact.refine_artifact(params, config)
   end
 end
