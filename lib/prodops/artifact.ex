@@ -203,7 +203,7 @@ defmodule ProdopsEx.Artifact do
   @spec get_artifacts_for_project(map, %Config{}) :: {:ok, list} | {:error, any}
   def get_artifacts_for_project(params, %Config{} = config) do
     endpoint = url(params, config)
-    Client.api_get(endpoint, [], config)
+    Client.api_get(endpoint, config)
   end
 
   @doc """
