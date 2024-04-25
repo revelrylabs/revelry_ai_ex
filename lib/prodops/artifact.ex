@@ -155,7 +155,7 @@ defmodule ProdopsEx.Artifact do
   alias ProdopsEx.Client
   alias ProdopsEx.Config
 
-  @base_path "/api/v1/artifact_types/"
+  @base_path "/api/v1/artifact_types"
 
   def url(%{project_id: project_id, slug: slug}, %Config{} = config) do
     config.api_url <> @base_path <> "/#{slug}/artifacts?project_id=#{project_id}"
