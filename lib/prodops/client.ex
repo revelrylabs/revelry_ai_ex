@@ -55,6 +55,12 @@ defmodule ProdopsEx.Client do
     |> handle_response()
   end
 
+  def multi_part_api_post(path, body, config) do
+    path
+    |> post(body, multi_part_request_headers(config), config.http_options)
+    |> handle_response()
+  end
+
   def api_delete(path, config) do
     path
     |> delete(request_headers(config), config.http_options)
@@ -67,4 +73,12 @@ defmodule ProdopsEx.Client do
       {"Content-Type", "application/json"}
     ]
   end
+
+  defp multi_part_request_headers(config) do
+    [
+      {"Authorization", "Bearer #{config.bearer_token}"},
+      {"Content-Type", "multipart/form-data"}
+    ]
+  end
+
 end
