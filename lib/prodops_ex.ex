@@ -5,6 +5,7 @@ defmodule ProdopsEx do
 
   alias ProdopsEx.Artifacts
   alias ProdopsEx.ArtifactType
+  alias ProdopsEx.PromptTemplate
   alias ProdopsEx.Project
   alias ProdopsEx.Validate
 
@@ -51,6 +52,28 @@ defmodule ProdopsEx do
   """
   def get_artifacts_for_project(params, config) do
     Artifacts.get_artifacts_for_project(params, config)
+  end
+
+  @doc """
+  Retrieves prompt templates for a given artifact type.
+
+  ## Parameters
+
+  - `params`: The parameters for the artifact request.
+  - `config`: The configuration map containing the API key and endpoint URL.
+
+  ## Example
+  ```
+  ProdopsEx.get_prompt_templates_for_artifact_type(
+    %{artifact_type_slug: "story"},
+    %ProdopsEx.Config{
+      bearer_token: "your_api_key_here",
+    }
+  )
+  ```
+  """
+  def get_prompt_templates_for_artifact_type(params, config) do
+    PromptTemplate.get_prompt_templates_for_artifact_type(params, config)
   end
 
   @doc """
