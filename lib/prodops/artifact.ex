@@ -211,11 +211,8 @@ defmodule ProdopsEx.Artifact do
 
   ## Parameters
 
-    - `prompt_template_id`: id of the prompt template.
-    - `project_id`: id of the project.
-    - `slug`: slug of the artifact type.
-    - `inputs`: A list of custom input fields, each with `name` and `value`.
-    - `fire_and_forget` (optional): Flag indicating whether to generate the artifact in the background without waiting for a response.
+    - `params`: The parameters for the artifact request.
+    - `config`: The configuration map containing the API key and optionally the URL.
 
   ## Examples
 
