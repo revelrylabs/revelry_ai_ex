@@ -232,13 +232,16 @@ defmodule ProdopsEx.Artifact do
       {:ok, %{"artifact_id" => 123, "status" => "created"}}
   """
   @spec create_artifact(
-          %{prompt_template_id: integer(), slug: String.t(), project_id: integer(), inputs: list(), fire_and_forget: boolean()},
+          %{
+            prompt_template_id: integer(),
+            slug: String.t(),
+            project_id: integer(),
+            inputs: list(),
+            fire_and_forget: boolean()
+          },
           Config.t()
         ) :: {:ok, map()} | {:error, term()}
-  def create_artifact(
-        %{prompt_template_id: prompt_template_id} = params,
-        %Config{} = config
-      ) do
+  def create_artifact(%{prompt_template_id: prompt_template_id} = params, %Config{} = config) do
     url = url(params, config)
     fire_and_forget = Map.get(params, :fire_and_forget, false)
     inputs = Map.get(params, :inputs, [])
