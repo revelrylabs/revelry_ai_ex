@@ -38,42 +38,33 @@ defmodule ProdopsEx.Client do
     end
   end
 
-  def api_get(path, params \\ [], config) do
-    path
-    |> get(request_headers(config), request_options(config, params))
+  def api_get(url, config) do
+    url
+    |> get(request_headers(config), config.http_options)
     |> handle_response()
   end
 
-  def api_post(path, params \\ [], config) do
+  def api_post(url, body_params \\ [], config) do
     body =
-      params
+      body_params
       |> Map.new()
       |> Jason.encode!()
 
-    path
-    |> post(body, request_headers(config), request_options(config, params))
+    url
+    |> post(body, request_headers(config), config.http_options)
     |> handle_response()
   end
 
-  def api_delete(path, params \\ [], config) do
+  def api_delete(path, config) do
     path
-    |> delete(request_headers(config), request_options(config, params))
+    |> delete(request_headers(config), config.http_options)
     |> handle_response()
   end
 
   defp request_headers(config) do
     [
       {"Authorization", "Bearer #{config.bearer_token}"},
-      {"Content-type", "application/json"}
+      {"Content-Type", "application/json"}
     ]
-  end
-
-  defp request_options(config, params) do
-    base_options = config.http_options
-
-    case params do
-      [] -> base_options
-      _ -> Keyword.put_new(base_options, :params, params)
-    end
   end
 end

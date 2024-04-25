@@ -23,7 +23,7 @@ defmodule ProdopsEx.ArtifactType do
   """
   @spec list(%Config{}) :: {:ok, map} | {:error, any}
   def list(%Config{} = config) do
-    Client.api_get(url(config), [], config)
+    Client.api_get(url(config), config)
   end
 
   defp url(%Config{} = config) do

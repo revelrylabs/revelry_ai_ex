@@ -60,7 +60,7 @@ defmodule ProdopsEx.PromptTemplate do
   def get_prompt_templates_for_artifact_type(params, %Config{} = config) do
     %{artifact_type_slug: artifact_type_slug} = params
     endpoint = url(config) <> "/#{artifact_type_slug}/prompt_templates"
-    Client.api_get(endpoint, [], config)
+    Client.api_get(endpoint, config)
   end
 
   defp url(%Config{} = config) do

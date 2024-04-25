@@ -3,7 +3,7 @@ defmodule ProdopsEx do
   Documentation for `ProdopsEx`.
   """
 
-  alias ProdopsEx.Artifacts
+  alias ProdopsEx.Artifact
   alias ProdopsEx.ArtifactType
   alias ProdopsEx.Project
   alias ProdopsEx.PromptTemplate
@@ -28,7 +28,7 @@ defmodule ProdopsEx do
   ```
   """
   def delete_artifact_by_id(params, config) do
-    Artifacts.delete_artifact_by_id(params, config)
+    Artifact.delete_artifact_by_id(params, config)
   end
 
   @doc """
@@ -50,7 +50,7 @@ defmodule ProdopsEx do
   ```
   """
   def get_artifacts_for_project(params, config) do
-    Artifacts.get_artifacts_for_project(params, config)
+    Artifact.get_artifacts_for_project(params, config)
   end
 
   @doc """
@@ -72,7 +72,7 @@ defmodule ProdopsEx do
   ```
   """
   def get_artifact_by_id(params, config) do
-    Artifacts.get_artifact_by_id(params, config)
+    Artifact.get_artifact_by_id(params, config)
   end
 
   @doc """
@@ -153,6 +153,34 @@ defmodule ProdopsEx do
   """
   def list_projects(config) do
     Project.list(config)
+  end
+
+  @doc """
+  Creates an artifact.
+
+  ## Parameters
+
+  - `config`: The configuration map containing the API key and any other configuration values.
+  - `params`: The parameters for the artifact request.
+
+  ## Example
+  ```
+  ProdopsEx.create_artifact(
+    %ProdopsEx.Config{
+      bearer_token: "your_api_key_here",
+    }
+    %{
+      project_id: 123,
+      slug: "story",
+      prompt_template_id: 123,
+      inputs: [
+        %{name: "Input", value: "Value"}
+      ]}
+  )
+  ```
+  """
+  def create_artifact(params, config) do
+    Artifact.create_artifact(params, config)
   end
 
   @doc """
