@@ -236,7 +236,7 @@ defmodule ProdopsEx.Artifact do
             inputs: list(),
             fire_and_forget: boolean()
           },
-          Config.t()
+          %Config{}
         ) :: {:ok, map()} | {:error, term()}
   def create_artifact(%{prompt_template_id: prompt_template_id} = params, %Config{} = config) do
     url = url(params, config)
