@@ -5,8 +5,8 @@ defmodule ProdopsEx do
 
   alias ProdopsEx.Artifacts
   alias ProdopsEx.ArtifactType
-  alias ProdopsEx.PromptTemplate
   alias ProdopsEx.Project
+  alias ProdopsEx.PromptTemplate
   alias ProdopsEx.Validate
 
   @doc """
