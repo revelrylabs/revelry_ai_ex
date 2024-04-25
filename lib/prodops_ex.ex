@@ -230,7 +230,7 @@ defmodule ProdopsEx do
   )
   ```
   """
-  def create_artifact(config, params) do
-    Artifact.create_artifact(config, params)
+  def create_artifact(params, config) do
+    Artifact.create_artifact(params, config)
   end
 end

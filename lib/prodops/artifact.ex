@@ -232,17 +232,17 @@ defmodule ProdopsEx.Artifact do
       {:ok, %{"artifact_id" => 123, "status" => "created"}}
   """
   @spec create_artifact(
-          Config.t(),
-          %{prompt_template_id: integer(), slug: String.t(), project_id: integer(), inputs: list()}
+          %{prompt_template_id: integer(), slug: String.t(), project_id: integer(), inputs: list(), fire_and_forget: boolean()},
+          Config.t()
         ) :: {:ok, map()} | {:error, term()}
   def create_artifact(
-        %Config{} = config,
-        %{prompt_template_id: prompt_template_id, slug: slug, project_id: project_id} = params
+        %{prompt_template_id: prompt_template_id} = params,
+        %Config{} = config
       ) do
-    path = "/api/v1/artifact_types/#{slug}/artifacts?project_id=#{project_id}"
     url = url(params, config)
+    fire_and_forget = Map.get(params, :fire_and_forget, false)
     inputs = Map.get(params, :inputs, [])
-    body = %{prompt_template_id: prompt_template_id, inputs: inputs}
+    body = %{prompt_template_id: prompt_template_id, inputs: inputs, fire_and_forget: fire_and_forget}
 
     Client.api_post(url, body, config)
   end
