@@ -157,8 +157,8 @@ defmodule ProdopsEx.Artifact do
 
   @base_path "/api/v1/artifact_types"
 
-  def url(%{project_id: project_id, slug: slug}, %Config{} = config) do
-    config.api_url <> @base_path <> "/#{slug}/artifacts?project_id=#{project_id}"
+  def url(%{project_id: project_id, artifact_slug: artifact_slug}, %Config{} = config) do
+    config.api_url <> @base_path <> "/#{artifact_slug}/artifacts?project_id=#{project_id}"
   end
 
   @doc """
@@ -171,7 +171,7 @@ defmodule ProdopsEx.Artifact do
 
   ## Example
 
-      iex> ProdopsEx.get_artifacts_for_project(%{project_id: 1, slug: "story"}, %ProdopsEx.Config{bearer_token: "your_api_key_here"})
+      iex> ProdopsEx.get_artifacts_for_project(%{project_id: 1, artifact_slug: "story"}, %ProdopsEx.Config{bearer_token: "your_api_key_here"})
       {:ok,
         %{
           status: "ok",
@@ -220,7 +220,7 @@ defmodule ProdopsEx.Artifact do
       ...>   bearer_token: "your_api_key_here"
       ...> }, %{
       ...>   prompt_template_id: 2,
-      ...>   slug: "story",
+      ...>   artifact_slug: "story",
       ...>   inputs: [
       ...>     %{name: "Context", value: "this is a test"}
       ...>   ],
@@ -231,7 +231,7 @@ defmodule ProdopsEx.Artifact do
   @spec create_artifact(
           %{
             prompt_template_id: integer(),
-            slug: String.t(),
+            artifact_slug: String.t(),
             project_id: integer(),
             inputs: list(),
             fire_and_forget: boolean()
