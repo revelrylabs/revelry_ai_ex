@@ -5,6 +5,7 @@ defmodule ProdopsEx do
 
   alias ProdopsEx.Artifact
   alias ProdopsEx.ArtifactType
+  alias ProdopsEx.DataCenter
   alias ProdopsEx.Project
   alias ProdopsEx.PromptTemplate
   alias ProdopsEx.Validate
@@ -204,5 +205,30 @@ defmodule ProdopsEx do
   """
   def validate_api_key(config) do
     Validate.validate_api_key(config)
+  end
+
+  @doc """
+  Uploads a document to the ProdOps data center.
+
+  ## Parameters
+
+  - `params`: The parameters for the document upload.
+  - `config`: The configuration map containing the API key and endpoint URL.
+
+  ## Example
+  ```elixir
+  ProdopsEx.upload_document(
+    %{file_name: "test.txt"},
+    %ProdopsEx.Config{
+      bearer_token: "your_api_key_here",
+    }
+  )
+  ```
+
+  ## Returns
+   {:ok, %{status: "ok", response: %{"id" => 4}}}
+  """
+  def upload_document(params, config) do
+    DataCenter.upload_document(params, config)
   end
 end
