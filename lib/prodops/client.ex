@@ -4,6 +4,8 @@ defmodule ProdopsEx.Client do
   """
   use HTTPoison.Base
 
+  alias ProdopsEx.Stream
+
   def process_response_body(body) do
     {status, res} = Jason.decode(body)
 
@@ -50,9 +52,15 @@ defmodule ProdopsEx.Client do
       |> Map.new()
       |> Jason.encode!()
 
-    url
-    |> post(body, request_headers(config), config.http_options)
-    |> handle_response()
+    if Map.get(body_params, :stream, false) do
+      Stream.new(fn ->
+        post(url, body, request_headers(config), stream_request_options(config))
+      end)
+    else
+      url
+      |> post(body, request_headers(config), config.http_options)
+      |> handle_response()
+    end
   end
 
   def multi_part_api_post(path, body, config) do
@@ -72,6 +80,19 @@ defmodule ProdopsEx.Client do
       {"Authorization", "Bearer #{config.bearer_token}"},
       {"Content-Type", "application/json"}
     ]
+  end
+
+  defp stream_request_options(config) do
+    http_options = config.http_options
+
+    case http_options[:stream_to] do
+      nil ->
+        new_options = http_options ++ [stream_to: self()]
+        new_options
+
+      _ ->
+        http_options
+    end
   end
 
   defp multi_part_request_headers(config) do

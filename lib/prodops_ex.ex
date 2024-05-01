@@ -208,6 +208,29 @@ defmodule ProdopsEx do
   end
 
   @doc """
+  Refines an artifact by submitting a request with the required parameters.
+  ## Parameters
+  - `params`: The parameters for the artifact request.
+  - `config`: The configuration map containing the API key and endpoint URL.
+  ## Example
+  ```
+  ProdopsEx.stream_refine_artifact(
+    %{artifact_slug: "story", artifact_id: 1, stream: true, refine_prompt: "Refined prompt"},
+    %ProdopsEx.Config{
+      bearer_token: "your_api_key_here",
+    }
+  )
+  ```
+  """
+  def stream_refine_artifact(params, config) do
+    Artifact.stream_refine_artifact(params, config)
+  end
+
+  def stream_create_artifact(params, config) do
+    Artifact.stream_create_artifact(params, config)
+  end
+
+  @doc """
   Uploads a document to the ProdOps data center.
 
   ## Parameters

@@ -147,4 +147,28 @@ defmodule ProdopsEx.Artifact do
     endpoint = url(config) <> "/#{artifact_slug}/artifacts/#{artifact_id}"
     Client.api_delete(endpoint, config)
   end
+
+  @doc """
+  Refines an artifact by submitting a request with the required parameters.
+  ## Parameters
+  - `params`: The parameters for the artifact request.
+  - `config`: The configuration map containing the API key and endpoint URL.
+  ## Example
+      iex> ProdopsEx.stream_refine_artifact(%{artifact_slug: "story", artifact_id: 1}, %ProdopsEx.Config{bearer_token: "your_api_key_here"})
+  """
+  @spec stream_refine_artifact(map, %Config{}) :: {:ok, map} | {:error, any}
+  def stream_refine_artifact(params, %Config{} = config) do
+    %{artifact_slug: artifact_slug, artifact_id: artifact_id} = params
+    endpoint = url(config) <> "/#{artifact_slug}/artifacts/#{artifact_id}/refine_stream"
+    Client.api_post(endpoint, params, config)
+  end
+
+  @spec stream_create_artifact(map, %Config{}) :: {:ok, map} | {:error, any}
+  def stream_create_artifact(params, %Config{} = config) do
+    %{artifact_slug: artifact_slug, prompt_template_id: prompt_template_id, project_id: project_id} = params
+    endpoint = url(config) <> "/#{artifact_slug}/artifacts/stream?project_id=#{project_id}"
+    inputs = Map.get(params, :inputs, [])
+    body = %{prompt_template_id: prompt_template_id, inputs: inputs, stream: true}
+    Client.api_post(endpoint, body, config)
+  end
 end
