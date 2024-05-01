@@ -7,16 +7,8 @@ defmodule ProdopsEx.Artifact do
 
   @base_path "/api/v1/artifact_types"
 
-  def url(%{project_id: project_id, artifact_slug: artifact_slug}, %Config{} = config) do
-    config.api_url <> @base_path <> "/#{artifact_slug}/artifacts?project_id=#{project_id}"
-  end
-
-  def url(%{artifact_id: artifact_id, artifact_slug: artifact_slug, refine_prompt: _refine_prompt}, %Config{} = config) do
-    config.api_url <> @base_path <> "/#{artifact_slug}/artifacts/#{artifact_id}/refine"
-  end
-
-  defp url(%Config{} = config) do
-    config.api_url <> @base_path
+  defp url(config) do
+    config[:api_url] <> @base_path
   end
 
   @doc """
@@ -29,7 +21,7 @@ defmodule ProdopsEx.Artifact do
 
   ## Example
 
-      iex> ProdopsEx.get_artifacts_for_project(%{project_id: 1, artifact_slug: "story"}, %ProdopsEx.Config{bearer_token: "your_api_key_here"})
+      iex> ProdopsEx.get_artifacts_for_project(%{project_id: 1, artifact_slug: "story"})
       {:ok,
         %{
           status: "ok",
@@ -58,8 +50,8 @@ defmodule ProdopsEx.Artifact do
   ## Returns
   The function should return a list of artifacts for the specified project.
   """
-  @spec get_artifacts_for_project(map, %Config{}) :: {:ok, list} | {:error, any}
-  def get_artifacts_for_project(%{artifact_slug: artifact_slug, project_id: project_id} = _params, %Config{} = config) do
+  @spec get_artifacts_for_project(map, Keyword.t()) :: {:ok, list} | {:error, any}
+  def get_artifacts_for_project(%{artifact_slug: artifact_slug, project_id: project_id} = _params, config) do
     endpoint = url(config)
     path = "/#{artifact_slug}/artifacts?project_id=#{project_id}"
     Client.api_get(endpoint <> path, config)
@@ -75,9 +67,7 @@ defmodule ProdopsEx.Artifact do
 
   ## Examples
 
-      iex> ProdopsEx.Artifacts.create_artifact(%ProdopsEx.Config{
-      ...>   bearer_token: "your_api_key_here"
-      ...> }, %{
+      iex> ProdopsEx.Artifacts.create_artifact(%{
       ...>   prompt_template_id: 2,
       ...>   artifact_slug: "story",
       ...>   inputs: [
@@ -95,12 +85,13 @@ defmodule ProdopsEx.Artifact do
             inputs: list(),
             fire_and_forget: boolean()
           },
-          %Config{}
+          Keyword.t()
         ) :: {:ok, map()} | {:error, term()}
   def create_artifact(
         %{prompt_template_id: prompt_template_id, artifact_slug: artifact_slug, project_id: project_id} = params,
-        %Config{} = config
+        config
       ) do
+    config = Config.resolve_config(config)
     url = url(config)
     path = "/#{artifact_slug}/artifacts?project_id=#{project_id}"
     fire_and_forget = Map.get(params, :fire_and_forget, false)
@@ -119,13 +110,13 @@ defmodule ProdopsEx.Artifact do
 
   ## Example
 
-      iex> ProdopsEx.get_artifact_by_id(%{artifact_slug: "story", artifact_id: 1}, %ProdopsEx.Config{bearer_token: "your_api_key_here"})
+      iex> ProdopsEx.get_artifact_by_id(%{artifact_slug: "story", artifact_id: 1})
       {:ok,
 
         }
   """
-  @spec get_artifact_by_id(map, %Config{}) :: {:ok, map} | {:error, any}
-  def get_artifact_by_id(params, %Config{} = config) do
+  @spec get_artifact_by_id(map, Keyword.t()) :: {:ok, map} | {:error, any}
+  def get_artifact_by_id(params, config) do
     %{artifact_slug: artifact_slug, artifact_id: artifact_id} = params
     endpoint = url(config) <> "/#{artifact_slug}/artifacts/#{artifact_id}"
     Client.api_get(endpoint, config)
@@ -141,12 +132,12 @@ defmodule ProdopsEx.Artifact do
 
   ## Example
 
-      iex> ProdopsEx.delete_artifact_by_id(%{artifact_slug: "story", artifact_id: 1}, %ProdopsEx.Config{bearer_token: "your_api_key_here"})
+      iex> ProdopsEx.delete_artifact_by_id(%{artifact_slug: "story", artifact_id: 1})
       {:ok,
         %{status: "ok", response: %{"message" => "Artifact deleted successfully."}}}
   """
-  @spec delete_artifact_by_id(map, %Config{}) :: {:ok, map} | {:error, any}
-  def delete_artifact_by_id(params, %Config{} = config) do
+  @spec delete_artifact_by_id(map, Keyword.t()) :: {:ok, map} | {:error, any}
+  def delete_artifact_by_id(params, config) do
     %{artifact_slug: artifact_slug, artifact_id: artifact_id} = params
     endpoint = url(config) <> "/#{artifact_slug}/artifacts/#{artifact_id}"
     Client.api_delete(endpoint, config)
@@ -165,8 +156,6 @@ defmodule ProdopsEx.Artifact do
       ...>   artifact_id: 1,
       ...>   artifact_slug: "story",
       ...>   refine_prompt: "Refine this story"
-      ...> }, %ProdopsEx.Config{
-      ...>   bearer_token: "your_api_key"
       ...> })
   """
   @spec refine_artifact(
@@ -175,10 +164,10 @@ defmodule ProdopsEx.Artifact do
             artifact_slug: String.t(),
             refine_prompt: String.t()
           },
-          %Config{}
+          Keyword.t()
         ) :: {:ok, map} | {:error, any}
-  def refine_artifact(params, config) do
-    url = url(params, config)
+  def refine_artifact(%{artifact_slug: artifact_slug, artifact_id: artifact_id} = params, config) do
+    url = url(config) <> "/#{artifact_slug}/artifacts/#{artifact_id}/refine"
     Client.api_post(url, params, config)
   end
 end

@@ -12,7 +12,7 @@ defmodule ProdopsEx.ArtifactType do
 
   ## Examples
 
-      iex> ProdopsEx.ArtifactType.list(%ProdopsEx.Config{bearer_token: "your_api_key_here"})
+      iex> ProdopsEx.ArtifactType.list()
       {:ok, %{status: "ok", response: %{ "artifact_types": [
             {
                 "slug": "story",
@@ -21,12 +21,13 @@ defmodule ProdopsEx.ArtifactType do
             }
         ]}}}
   """
-  @spec list(%Config{}) :: {:ok, map} | {:error, any}
-  def list(%Config{} = config) do
+  @spec list(Keyword.t()) :: {:ok, map} | {:error, any}
+  def list(config) do
+    config = Config.resolve_config(config)
     Client.api_get(url(config), config)
   end
 
-  defp url(%Config{} = config) do
-    config.api_url <> @base_path
+  defp url(config) do
+    config[:api_url] <> @base_path
   end
 end

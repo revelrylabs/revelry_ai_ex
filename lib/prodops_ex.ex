@@ -5,6 +5,7 @@ defmodule ProdopsEx do
 
   alias ProdopsEx.Artifact
   alias ProdopsEx.ArtifactType
+  alias ProdopsEx.Config
   alias ProdopsEx.DataCenter
   alias ProdopsEx.Project
   alias ProdopsEx.PromptTemplate
@@ -16,19 +17,15 @@ defmodule ProdopsEx do
   ## Parameters
 
   - `params`: The parameters for the artifact delete request.
-  - `config`: The configuration map containing the API key and endpoint URL.
+  - `config`:  configuration map containing the API key and endpoint URL.
 
   ## Example
   ```elixir
-  ProdopsEx.delete_artifact_by_id(
-    %{artifact_slug: "story", artifact_id: 1},
-    %ProdopsEx.Config{
-      bearer_token: "your_api_key_here",
-    }
-  )
+  ProdopsEx.delete_artifact_by_id(%{artifact_slug: "story", artifact_id: 1})
   ```
   """
-  def delete_artifact_by_id(params, config) do
+  def delete_artifact_by_id(params, config \\ []) do
+    Config.resolve_config(config)
     Artifact.delete_artifact_by_id(params, config)
   end
 
@@ -42,15 +39,11 @@ defmodule ProdopsEx do
 
   ## Example
   ```
-  ProdopsEx.get_artifacts_for_project(
-    %{project_id: 212, artifact_slug: "story"},
-    %ProdopsEx.Config{
-      bearer_token: "your_api_key_here",
-    }
-  )
+  ProdopsEx.get_artifacts_for_project(%{project_id: 212, artifact_slug: "story"})
   ```
   """
-  def get_artifacts_for_project(params, config) do
+  def get_artifacts_for_project(params, config \\ []) do
+    Config.resolve_config(config)
     Artifact.get_artifacts_for_project(params, config)
   end
 
@@ -64,15 +57,11 @@ defmodule ProdopsEx do
 
   ## Example
   ```elixir
-  ProdopsEx.get_artifact_by_id(
-    %{artifact_slug: "story", artifact_id: 1},
-    %ProdopsEx.Config{
-      bearer_token: "your_api_key_here",
-    }
-  )
+  ProdopsEx.get_artifact_by_id(%{artifact_slug: "story", artifact_id: 1})
   ```
   """
-  def get_artifact_by_id(params, config) do
+  def get_artifact_by_id(params, config \\ []) do
+    Config.resolve_config(config)
     Artifact.get_artifact_by_id(params, config)
   end
 
@@ -85,11 +74,7 @@ defmodule ProdopsEx do
 
   ## Example
   ```elixir
-  ProdopsEx.list_artifact_types(
-    %ProdopsEx.Config{
-      bearer_token: "your_api_key_here",
-    }
-  )
+  ProdopsEx.list_artifact_types()
   ```
 
   ## Returns
@@ -101,7 +86,8 @@ defmodule ProdopsEx do
             }
   ]}}}
   """
-  def list_artifact_types(config) do
+  def list_artifact_types(config \\ []) do
+    Config.resolve_config(config)
     ArtifactType.list(config)
   end
 
@@ -115,15 +101,11 @@ defmodule ProdopsEx do
 
   ## Example
   ```
-  ProdopsEx.get_prompt_templates_for_artifact_type(
-    %{artifact_type_slug: "story"},
-    %ProdopsEx.Config{
-      bearer_token: "your_api_key_here",
-    }
-  )
+  ProdopsEx.get_prompt_templates_for_artifact_type(%{artifact_type_slug: "story"})
   ```
   """
-  def get_prompt_templates_for_artifact_type(params, config) do
+  def get_prompt_templates_for_artifact_type(params, config \\ []) do
+    Config.resolve_config(config)
     PromptTemplate.get_prompt_templates_for_artifact_type(params, config)
   end
 
@@ -136,11 +118,7 @@ defmodule ProdopsEx do
 
   ## Example
   ```elixir
-  ProdopsEx.list_projects(
-    %ProdopsEx.Config{
-      bearer_token: "your_api_key_here",
-    }
-  )
+  ProdopsEx.list_projects()
   ```
 
   ## Returns
@@ -152,7 +130,8 @@ defmodule ProdopsEx do
             }
   ]}}}
   """
-  def list_projects(config) do
+  def list_projects(config \\ []) do
+    Config.resolve_config(config)
     Project.list(config)
   end
 
@@ -161,26 +140,23 @@ defmodule ProdopsEx do
 
   ## Parameters
 
-  - `config`: The configuration map containing the API key and any other configuration values.
   - `params`: The parameters for the artifact request.
+  - `config`: The configuration map containing the API key and any other configuration values.
 
   ## Example
   ```
-  ProdopsEx.create_artifact(
-    %ProdopsEx.Config{
-      bearer_token: "your_api_key_here",
-    }
-    %{
-      project_id: 123,
-      slug: "story",
-      prompt_template_id: 123,
-      inputs: [
-        %{name: "Input", value: "Value"}
-      ]}
-  )
+  ProdopsEx.create_artifact(%{
+    project_id: 123,
+    slug: "story",
+    prompt_template_id: 123,
+    inputs: [
+      %{name: "Input", value: "Value"}
+    ]
+  })
   ```
   """
-  def create_artifact(params, config) do
+  def create_artifact(params, config \\ []) do
+    Config.resolve_config(config)
     Artifact.create_artifact(params, config)
   end
 
@@ -193,17 +169,14 @@ defmodule ProdopsEx do
 
   ## Example
   ```elixir
-  ProdopsEx.validate(
-    %ProdopsEx.Config{
-      bearer_token: "your_api_key_here",
-    }
-  )
+  ProdopsEx.validate()
   ```
 
   ## Returns
   {:ok, %{status: "ok", response: %{"team_id" => 1, "team_name" => "ProdOps"}}}
   """
-  def validate_api_key(config) do
+  def validate_api_key(config \\ []) do
+    Config.resolve_config(config)
     Validate.validate_api_key(config)
   end
 
@@ -217,18 +190,14 @@ defmodule ProdopsEx do
 
   ## Example
   ```elixir
-  ProdopsEx.upload_document(
-    %{file_name: "test.txt"},
-    %ProdopsEx.Config{
-      bearer_token: "your_api_key_here",
-    }
-  )
+  ProdopsEx.upload_document(%{file_name: "test.txt"})
   ```
 
   ## Returns
    {:ok, %{status: "ok", response: %{"id" => 4}}}
   """
-  def upload_document(params, config) do
+  def upload_document(params, config \\ []) do
+    Config.resolve_config(config)
     DataCenter.upload_document(params, config)
   end
 

@@ -17,7 +17,7 @@ defmodule ProdopsEx.PromptTemplate do
 
   ## Example
 
-      iex> ProdopsEx.get_prompt_templates_for_artifact_type(%{artifact_type_slug: "story"}, %ProdopsEx.Config{bearer_token: "your_api_key_here"})
+      iex> ProdopsEx.get_prompt_templates_for_artifact_type(%{artifact_type_slug: "story"})
       {:ok,
         %{
           status: "ok",
@@ -56,14 +56,15 @@ defmodule ProdopsEx.PromptTemplate do
   ## Returns
   The function should return a list of prompt templates for the specified artifact type.
   """
-  @spec get_prompt_templates_for_artifact_type(map, %Config{}) :: {:ok, list} | {:error, any}
-  def get_prompt_templates_for_artifact_type(params, %Config{} = config) do
+  @spec get_prompt_templates_for_artifact_type(map, Keyword.t()) :: {:ok, list} | {:error, any}
+  def get_prompt_templates_for_artifact_type(params, config) do
+    config = Config.resolve_config(config)
     %{artifact_type_slug: artifact_type_slug} = params
     endpoint = url(config) <> "/#{artifact_type_slug}/prompt_templates"
     Client.api_get(endpoint, config)
   end
 
-  defp url(%Config{} = config) do
-    config.api_url <> @base_path
+  defp url(config) do
+    config[:api_url] <> @base_path
   end
 end
