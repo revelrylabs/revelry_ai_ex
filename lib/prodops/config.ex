@@ -40,7 +40,7 @@ defmodule ProdopsEx.Config do
   used by methods in this library.
   """
   @spec resolve_config(Keyword.t()) :: Keyword.t()
-  def resolve_config(passed_in_config) do
+  def resolve_config(passed_in_config \\ []) do
     application_config = Application.get_all_env(:prodops_ex)
 
     passed_in_http_options = passed_in_config[:http_options] || []

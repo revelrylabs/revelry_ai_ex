@@ -22,7 +22,7 @@ defmodule ProdopsEx.ArtifactType do
         ]}}}
   """
   @spec list(Keyword.t()) :: {:ok, map} | {:error, any}
-  def list(config) do
+  def list(config \\ []) do
     config = Config.resolve_config(config)
     Client.api_get(url(config), config)
   end

@@ -16,12 +16,13 @@ defmodule ProdopsEx.Artifact do
 
   ## Parameters
 
-  - `params`: The parameters for the artifact request.
-  - `config`: The configuration map containing the API key and endpoint URL.
+  - `project_id`: the ID of the project
+  - `artifact_slug`: the slug which defines the type of artifacts that will be returned
+  - `config` (optional): a configuration map used to override default config values
 
   ## Example
 
-      iex> ProdopsEx.get_artifacts_for_project(%{project_id: 1, artifact_slug: "story"})
+      iex> ProdopsEx.Artifact.list_project_artifacts(1, "story")
       {:ok,
         %{
           status: "ok",
@@ -48,10 +49,13 @@ defmodule ProdopsEx.Artifact do
         }}
 
   ## Returns
-  The function should return a list of artifacts for the specified project.
+  The function returns a list of artifacts for the specified project which
+  match the artifact slug.
   """
-  @spec get_artifacts_for_project(map, Keyword.t()) :: {:ok, list} | {:error, any}
-  def get_artifacts_for_project(%{artifact_slug: artifact_slug, project_id: project_id} = _params, config) do
+  @spec list_project_artifacts(integer(), String.t(), Keyword.t()) :: {:ok, list} | {:error, any}
+  def list_project_artifacts(project_id, artifact_slug, config \\ [])
+      when is_integer(project_id) and is_binary(artifact_slug) do
+    config = Config.resolve_config(config)
     endpoint = url(config)
     path = "/#{artifact_slug}/artifacts?project_id=#{project_id}"
     Client.api_get(endpoint <> path, config)
@@ -62,12 +66,12 @@ defmodule ProdopsEx.Artifact do
 
   ## Parameters
 
-    - `params`: The parameters for the artifact request.
-    - `config`: The configuration map containing the API key and optionally the URL.
+  - `params`: The parameters for the artifact request.
+  - `config` (optional): a configuration map used to override default config values
 
   ## Examples
 
-      iex> ProdopsEx.Artifacts.create_artifact(%{
+      iex> ProdopsEx.Artifact.create(%{
       ...>   prompt_template_id: 2,
       ...>   artifact_slug: "story",
       ...>   inputs: [
@@ -77,7 +81,7 @@ defmodule ProdopsEx.Artifact do
       ...> })
       {:ok, %{"artifact_id" => 123, "status" => "created"}}
   """
-  @spec create_artifact(
+  @spec create(
           %{
             prompt_template_id: integer(),
             artifact_slug: String.t(),
@@ -87,9 +91,9 @@ defmodule ProdopsEx.Artifact do
           },
           Keyword.t()
         ) :: {:ok, map()} | {:error, term()}
-  def create_artifact(
+  def create(
         %{prompt_template_id: prompt_template_id, artifact_slug: artifact_slug, project_id: project_id} = params,
-        config
+        config \\ []
       ) do
     config = Config.resolve_config(config)
     url = url(config)
@@ -105,19 +109,20 @@ defmodule ProdopsEx.Artifact do
 
   ## Parameters
 
-  - `params`: The parameters for the artifact request.
-  - `config`: The configuration map containing the API key and endpoint URL.
+  - `artifact_id`: the ID of the artifact
+  - `artifact_slug`: the slug which defines the type of artifact that will be returned
+  - `config` (optional): a configuration map used to override default config values
 
   ## Example
 
-      iex> ProdopsEx.get_artifact_by_id(%{artifact_slug: "story", artifact_id: 1})
+      iex> ProdopsEx.Artifact.get(1, "story")
       {:ok,
 
         }
   """
-  @spec get_artifact_by_id(map, Keyword.t()) :: {:ok, map} | {:error, any}
-  def get_artifact_by_id(params, config) do
-    %{artifact_slug: artifact_slug, artifact_id: artifact_id} = params
+  @spec get(integer(), String.t(), Keyword.t()) :: {:ok, map} | {:error, any}
+  def get(artifact_id, artifact_slug, config \\ []) when is_integer(artifact_id) and is_binary(artifact_slug) do
+    config = Config.resolve_config(config)
     endpoint = url(config) <> "/#{artifact_slug}/artifacts/#{artifact_id}"
     Client.api_get(endpoint, config)
   end
@@ -127,18 +132,19 @@ defmodule ProdopsEx.Artifact do
 
   ## Parameters
 
-  - `params`: The parameters for the artifact delete request.
-  - `config`: The configuration map containing the API key and endpoint URL.
+  - `artifact_id`: the ID of the artifact
+  - `artifact_slug`: the type of the artifact to be deleted
+  - `config` (optional): a configuration map used to override default config values
 
   ## Example
 
-      iex> ProdopsEx.delete_artifact_by_id(%{artifact_slug: "story", artifact_id: 1})
+      iex> ProdopsEx.Artifact.delete(1)
       {:ok,
         %{status: "ok", response: %{"message" => "Artifact deleted successfully."}}}
   """
-  @spec delete_artifact_by_id(map, Keyword.t()) :: {:ok, map} | {:error, any}
-  def delete_artifact_by_id(params, config) do
-    %{artifact_slug: artifact_slug, artifact_id: artifact_id} = params
+  @spec delete(integer(), String.t(), Keyword.t()) :: {:ok, map} | {:error, any}
+  def delete(artifact_id, artifact_slug, config \\ []) when is_integer(artifact_id) and is_binary(artifact_slug) do
+    config = Config.resolve_config(config)
     endpoint = url(config) <> "/#{artifact_slug}/artifacts/#{artifact_id}"
     Client.api_delete(endpoint, config)
   end

@@ -1,8 +1,6 @@
 defmodule ProdopsEx.ClientTest do
   use ExUnit.Case
 
-  doctest ProdopsEx
-
   describe "handle_response/1" do
     test "it should respond with success if HTTP status code 200 and the response is a JSON" do
       res =

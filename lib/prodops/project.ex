@@ -14,6 +14,10 @@ defmodule ProdopsEx.Project do
   @doc """
   Returns a list of all projects for a given team
 
+  ## Parameters
+
+  - `config` (optional): a configuration map used to override default config values
+
   ## Examples
 
       iex> ProdopsEx.Project.list()
