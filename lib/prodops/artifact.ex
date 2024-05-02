@@ -176,4 +176,24 @@ defmodule ProdopsEx.Artifact do
     url = url(config) <> "/#{artifact_slug}/artifacts/#{artifact_id}/refine"
     Client.api_post(url, params, config)
   end
+
+  @doc """
+  Refines an artifact by submitting a request with the required parameters.
+
+  ## Parameters
+
+  - `params`: The parameters for the artifact request.
+  - `config`: The configuration map containing the API key and endpoint URL.
+
+  ## Example
+
+      iex> ProdopsEx.stream_refine_artifact(%{artifact_slug: "story", artifact_id: 1}, %ProdopsEx.Config{bearer_token: "your_api_key_here"})
+  """
+  @spec stream_refine_artifact(map, Keyword.t()) :: {:ok, map} | {:error, any}
+  def stream_refine_artifact(params, config \\ []) do
+    config = Config.resolve_config(config)
+    %{artifact_slug: artifact_slug, artifact_id: artifact_id} = params
+    endpoint = url(config) <> "/#{artifact_slug}/artifacts/#{artifact_id}/refine_stream"
+    Client.api_post(endpoint, params, config)
+  end
 end

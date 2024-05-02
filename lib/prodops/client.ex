@@ -4,6 +4,8 @@ defmodule ProdopsEx.Client do
   """
   use HTTPoison.Base
 
+  alias ProdopsEx.Stream
+
   def process_response_body(body) do
     {status, res} = Jason.decode(body)
 
@@ -44,15 +46,18 @@ defmodule ProdopsEx.Client do
     |> handle_response()
   end
 
-  def api_post(url, body_params \\ [], config) do
-    body =
-      body_params
-      |> Map.new()
-      |> Jason.encode!()
+  def api_post(url, body_params \\ %{}, config) do
+    body = Jason.encode!(body_params)
 
-    url
-    |> post(body, request_headers(config), config[:http_options])
-    |> handle_response()
+    if Map.get(body_params, :stream, false) do
+      Stream.new(fn ->
+        post(url, body, request_headers(config), stream_request_options(config))
+      end)
+    else
+      url
+      |> post(body, request_headers(config), config[:http_options])
+      |> handle_response()
+    end
   end
 
   def multi_part_api_post(path, body, config) do
@@ -72,6 +77,21 @@ defmodule ProdopsEx.Client do
       {"Authorization", "Bearer #{config[:api_key]}"},
       {"Content-Type", "application/json"}
     ]
+  end
+
+  defp stream_request_options(config) do
+    # async: :once seems to be required to work properly with
+    # HTTPoison.stream_next
+    http_options = config[:http_options] ++ [async: :once]
+
+    case http_options[:stream_to] do
+      nil ->
+        new_options = http_options ++ [stream_to: self()]
+        new_options
+
+      _ ->
+        http_options
+    end
   end
 
   defp multi_part_request_headers(config) do
