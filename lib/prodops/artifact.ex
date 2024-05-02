@@ -192,8 +192,38 @@ defmodule ProdopsEx.Artifact do
   @spec stream_refine_artifact(map, Keyword.t()) :: {:ok, map} | {:error, any}
   def stream_refine_artifact(params, config \\ []) do
     config = Config.resolve_config(config)
-    %{artifact_slug: artifact_slug, artifact_id: artifact_id} = params
+    %{artifact_slug: artifact_slug, artifact_id: artifact_id, refine_prompt: refine_prompt} = params
     endpoint = url(config) <> "/#{artifact_slug}/artifacts/#{artifact_id}/refine_stream"
-    Client.api_post(endpoint, params, config)
+    body = %{artifact_slug: artifact_slug, artifact_id: artifact_id, refine_prompt: refine_prompt, stream: true}
+    Client.api_post(endpoint, body, config)
+  end
+
+  @doc """
+  Creates an artifact by submitting a request with the required parameters.
+
+  ## Parameters
+
+  - `params`: The parameters for the artifact creation request.
+  - `config`: The configuration map containing the API key and endpoint URL.
+
+  ## Example
+
+      iex> ProdopsEx.Artifact.stream_create_artifact(%{
+      ...>   prompt_template_id: 2,
+      ...>   project_id: 1,
+      ...>   artifact_slug: "story",
+      ...>   inputs: [
+      ...>     %{name: "Context", value: "this is a test"}
+      ...>   ]
+      ...> })
+  """
+  @spec stream_create_artifact(map, Keyword.t()) :: {:ok, map} | {:error, any}
+  def stream_create_artifact(params, config \\ []) do
+    config = Config.resolve_config(config)
+    %{artifact_slug: artifact_slug, prompt_template_id: prompt_template_id, project_id: project_id} = params
+    endpoint = url(config) <> "/#{artifact_slug}/artifacts/stream?project_id=#{project_id}"
+    inputs = Map.get(params, :inputs, [])
+    body = %{prompt_template_id: prompt_template_id, inputs: inputs, stream: true}
+    Client.api_post(endpoint, body, config)
   end
 end
