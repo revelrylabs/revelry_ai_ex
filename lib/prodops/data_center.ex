@@ -21,7 +21,7 @@ defmodule ProdopsEx.DataCenter do
       {:ok, %{status: "ok", response: %{"id" => 4}}}
   """
   @spec upload_document(map, Keyword.t()) :: {:ok, map} | {:error, any}
-  def upload_document(path_to_file, config) do
+  def upload_document(path_to_file, config \\ []) do
     config = Config.resolve_config(config)
     endpoint = url(config) <> "/documents/upload"
     body = {:multipart, [{:file, path_to_file, {["form-data"], [name: "\"document\"", filename: path_to_file]}, []}]}
