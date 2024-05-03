@@ -14,9 +14,9 @@ defmodule ProdopsEx.MixProject do
       name: "ProdopsEx",
       source_url: "https://github.com/revelrylabs/prodops_ex",
       docs: [
-        main: "ProdopsEx",
+        main: "readme",
         logo: "prodops-logo.png",
-        extras: ["README.md"]
+        extras: ["README.md", "LICENSE", "CONTRIBUTING.md", "RELEASES.md", "CODE_OF_CONDUCT.md"]
       ]
     ]
   end
