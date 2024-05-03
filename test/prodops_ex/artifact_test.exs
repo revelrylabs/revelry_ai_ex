@@ -93,7 +93,7 @@ defmodule ProdopsEx.ArtifactTest do
   describe "stream_refine_artifact/2" do
     test "streams refinement of an artifact by submitting a request with the required parameters" do
       config = [api_url: "https://api.example.com", api_key: "secret_key"]
-      params = %{artifact_id: 1, artifact_slug: "story"}
+      params = %{stream: true, artifact_id: 1, artifact_slug: "story", refine_prompt: "refine prompt"}
       full_url = "#{config[:api_url]}/api/v1/artifact_types/story/artifacts/1/refine_stream"
 
       response = {:ok, %{"status" => "ok", "response" => %{"message" => "Artifact stream refined successfully."}}}

@@ -1,0 +1,47 @@
+name: Publish to Hex
+
+on:
+  release:
+    types: [published]
+
+jobs:
+  publish:
+    runs-on: ubuntu-22.04
+    name: Publish to Hex
+    env:
+      HEX_API_KEY: ${{ secrets.HEX_API_KEY }}
+      MIX_ENV: test
+    strategy:
+      matrix:
+        include:
+          - otp: "26"
+            elixir: "1.16"
+    steps:
+      - name: Set up Elixir
+        uses: erlef/setup-beam@v1
+        with:
+          otp-version: ${{matrix.otp}}
+          elixir-version: ${{matrix.elixir}}
+
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      # We want to use the newest deps here, since library users will not be
+      # locked to our mix.lock versions
+      - name: Install dependencies
+        run: mix deps.unlock --all && mix deps.get
+
+      - name: Compile and fail on warnings
+        run: mix compile --warnings-as-errors
+
+      - name: Check formatting
+        run: mix format --check-formatted
+
+      - name: Check function specs with Dialyzer
+        run: mix dialyzer
+
+      - name: Run tests
+        run: mix test
+
+      - name: Publish to Hex
+        run: mix hex.publish --yes

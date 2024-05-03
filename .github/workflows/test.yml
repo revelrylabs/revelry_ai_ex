@@ -12,8 +12,11 @@ jobs:
       MIX_ENV: test
     strategy:
       matrix:
-        otp: ["26.2"]
-        elixir: ["1.16.2"]
+        include:
+          - otp: "24"
+            elixir: "1.12"
+          - otp: "26"
+            elixir: "1.16"
     steps:
       - name: Set up Elixir
         uses: erlef/setup-beam@v1
@@ -42,10 +45,10 @@ jobs:
           cache-name: cache-compiled-build
         with:
           path: _build
-          key: ${{ runner.os }}-mix-${{ env.cache-name }}-${{ hashFiles('**/mix.lock') }}
+          key: ${{ runner.os }}-mix-${{ env.cache-name }}-elixir-${{ matrix.elixir }}-${{ hashFiles('**/mix.lock') }}
           restore-keys: |
-            ${{ runner.os }}-mix-${{ env.cache-name }}-
-            ${{ runner.os }}-mix-
+            ${{ runner.os }}-mix-${{ env.cache-name }}-elixir-${{ matrix.elixir }}-
+            ${{ runner.os }}-mix-${{ matrix.elixir }}-
 
       - name: Install dependencies
         run: mix deps.get
@@ -54,6 +57,7 @@ jobs:
         run: mix compile --warnings-as-errors
 
       - name: Check formatting
+        if: matrix.elixir == '1.16' && matrix.otp == '26'
         run: mix format --check-formatted
 
       - name: Cache PLT files for Dialyzer
@@ -67,6 +71,7 @@ jobs:
             plt-cache-
 
       - name: Check function specs with Dialyzer
+        if: matrix.elixir == '1.16' && matrix.otp == '26'
         run: mix dialyzer
 
       - name: Run tests
