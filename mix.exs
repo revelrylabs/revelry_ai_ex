@@ -1,6 +1,8 @@
 defmodule ProdopsEx.MixProject do
   use Mix.Project
 
+  @source_url "https://github.com/revelrylabs/prodops_ex"
+
   def project do
     [
       app: :prodops_ex,
@@ -11,10 +13,14 @@ defmodule ProdopsEx.MixProject do
       deps: deps(),
       compilers: [:yecc, :leex] ++ Mix.compilers(),
       aliases: aliases(),
+      package: [
+        licenses: ["MIT"],
+        links: %{"GitHub" => @source_url},
+      ],
 
       # Docs
       name: "ProdopsEx",
-      source_url: "https://github.com/revelrylabs/prodops_ex",
+      source_url: @source_url,
       docs: [
         main: "readme",
         logo: "prodops-logo.png",
