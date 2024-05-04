@@ -25,6 +25,13 @@ For convenience we recommend using this as a pre-push hook:
 cp presubmit.sh .git/hooks/pre-push
 ```
 
+You can run the library via the `iex` shell to run functions through it, e.g.:
+
+```
+iex -S mix
+iex()> ProdopsEx.Artifact.get(123, "story")
+```
+
 ## Submitting Changes
 
 1. Find or open an Issue related to the changes you're making

@@ -1,6 +1,10 @@
 defmodule ProdopsEx.ArtifactType do
   @moduledoc """
   Handles artifact type operations for the ProdOps API.
+
+  These represent types of outputs. They may be things like user stories, code
+  snippets, blog posts, or anything else that has been defined within the
+  ProdOps UI. They are used to classify generated Artifacts into groups.
   """
   alias ProdopsEx.Client
   alias ProdopsEx.Config
@@ -13,13 +17,21 @@ defmodule ProdopsEx.ArtifactType do
   ## Examples
 
       iex> ProdopsEx.ArtifactType.list()
-      {:ok, %{status: "ok", response: %{ "artifact_types": [
-            {
-                "slug": "story",
-                "name": "Story",
-                "description": "This is a story"
-            }
-        ]}}}
+      {:ok,
+        %{
+          status: "ok",
+          response: %{
+            "artifact_types" => [
+              %{
+                "description" => "This is a story",
+                "name" => "Story",
+                "slug" => "story"
+              },
+              ...
+            ]
+          }
+        }
+      }
   """
   @spec list(Keyword.t()) :: {:ok, map} | {:error, any}
   def list(config \\ []) do

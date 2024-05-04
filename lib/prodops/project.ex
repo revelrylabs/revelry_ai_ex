@@ -1,6 +1,10 @@
 defmodule ProdopsEx.Project do
   @moduledoc """
   Handles project operations for the ProdOps API.
+
+  A Project is used for organization, and likely represents some real-world
+  project, such as development of an application. Some resources can be
+  Project-scoped. A Team may have multiple Projects.
   """
   alias ProdopsEx.Client
   alias ProdopsEx.Config
@@ -21,13 +25,25 @@ defmodule ProdopsEx.Project do
   ## Examples
 
       iex> ProdopsEx.Project.list()
-      {:ok, %{status: "ok", response: %{ "projects": [
-            {
-              "id": 1,
-              "name": "ProdOps",
-              "overview": "This is the project overview"
-            }
-        ]}}}
+      {:ok,
+        %{
+          status: "ok",
+          response: %{
+            "projects" => [
+              %{
+                "id" => 1,
+                "name" => "Project Name",
+                "overview" => "Project Overview"
+              },
+              %{
+                "id" => 2,
+                "name" => "Second Project",
+                "overview" => "Second Project Overview"
+              }
+            ]
+          }
+        }
+      }
   """
   @spec list(Keyword.t()) :: {:ok, map} | {:error, any}
   def list(config \\ []) do

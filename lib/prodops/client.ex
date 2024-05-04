@@ -1,7 +1,5 @@
 defmodule ProdopsEx.Client do
-  @moduledoc """
-  Handles HTTP client operations for interacting with the ProdOps API.
-  """
+  @moduledoc false
   use HTTPoison.Base
 
   alias ProdopsEx.Stream

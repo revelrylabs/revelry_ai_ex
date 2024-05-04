@@ -1,6 +1,14 @@
 defmodule ProdopsEx.DataCenter do
   @moduledoc """
   Handles data center operations for the ProdOps API.
+
+  The Data Center is used for:
+   - uploading documents
+   - managing collections of documents
+   - connecting external Data Sources (GitHub, Jira, Notion, etc.)
+
+  Not all of these items are currently supported by the ProdOps API, so there
+  is additional functionality in the UI not yet available in this SDK.
   """
   alias ProdopsEx.Client
   alias ProdopsEx.Config
@@ -17,7 +25,7 @@ defmodule ProdopsEx.DataCenter do
 
   ## Examples
 
-      iex> ProdopsEx.DataCenter.upload_document("/path/to/file.txt"})
+      iex> ProdopsEx.DataCenter.upload_document("/path/to/file.txt")
       {:ok, %{status: "ok", response: %{"id" => 4}}}
   """
   @spec upload_document(map, Keyword.t()) :: {:ok, map} | {:error, any}

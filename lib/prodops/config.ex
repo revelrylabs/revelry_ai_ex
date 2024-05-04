@@ -1,7 +1,5 @@
 defmodule ProdopsEx.Config do
-  @moduledoc """
-  Defines the configuration structure for interacting with the ProdOps API.
-  """
+  @moduledoc false
 
   @definition [
     api_url: [

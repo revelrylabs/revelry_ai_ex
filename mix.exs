@@ -15,7 +15,6 @@ defmodule ProdopsEx.MixProject do
       # Docs
       name: "ProdopsEx",
       source_url: "https://github.com/revelrylabs/prodops_ex",
-      homepage_url: "https://prodops.ai",
       docs: [
         main: "readme",
         logo: "prodops-logo.png",

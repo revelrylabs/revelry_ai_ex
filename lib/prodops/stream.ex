@@ -1,8 +1,12 @@
 defmodule ProdopsEx.Stream do
-  @moduledoc """
-  Handles streaming operations for the ProdOps API.
-  """
+  @moduledoc false
 
+  @doc """
+  Creates a readable stream of information that another process can consume.
+
+  This is used for endpoints that support returning text as it is generated,
+  rather than waiting for the entire generation output to be ready.
+  """
   def new(start_fun) do
     Stream.resource(
       start_fun,
