@@ -63,9 +63,15 @@ defmodule ProdopsEx.Stream do
             %HTTPoison.AsyncChunk{chunk: chunk} ->
               data =
                 chunk
-                |> String.split("\n")
-                |> Enum.filter(fn line -> String.starts_with?(line, "data: ") end)
-                |> Enum.map(fn line -> String.trim_leading(line, "data: ") end)
+                |> String.split("\n\n")
+                |> Enum.map(fn event ->
+                  event
+                  |> String.split("\n")
+                  |> Enum.filter(fn line -> String.starts_with?(line, "data: ") end)
+                  |> Enum.map(fn line -> String.trim_leading(line, "data: ") end)
+                  |> Enum.join("\n")
+                end)
+                |> Enum.filter(fn data -> data != "" end)
 
               HTTPoison.stream_next(res)
               {data, res}
