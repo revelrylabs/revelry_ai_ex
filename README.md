@@ -25,7 +25,7 @@ Add ProdopsEx to your mix.exs:
 ```elixir
 def deps do
   [
-    {:prodops_ex, "~> 0.1.0"}
+    {:prodops_ex, "~> 0.2.0"}
   ]
 end
 ```

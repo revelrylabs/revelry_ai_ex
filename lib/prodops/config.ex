@@ -4,7 +4,7 @@ defmodule ProdopsEx.Config do
   @definition [
     api_url: [
       type: :string,
-      default: "https://app.prodops.ai"
+      default: "https://app.revelry.ai/"
     ],
     api_key: [
       type: :string,
