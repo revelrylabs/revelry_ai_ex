@@ -68,8 +68,7 @@ defmodule ProdopsEx.Stream do
                   event
                   |> String.split("\n")
                   |> Enum.filter(fn line -> String.starts_with?(line, "data: ") end)
-                  |> Enum.map(fn line -> String.trim_leading(line, "data: ") end)
-                  |> Enum.join("\n")
+                  |> Enum.map_join("\n", fn line -> String.trim_leading(line, "data: ") end)
                 end)
                 |> Enum.filter(fn data -> data != "" end)
 
