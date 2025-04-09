@@ -1,4 +1,4 @@
-defmodule ProdopsEx.Stream do
+defmodule RevelryAI.Stream do
   @moduledoc false
 
   @doc """

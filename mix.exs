@@ -1,12 +1,12 @@
-defmodule ProdopsEx.MixProject do
+defmodule RevelryAI.MixProject do
   use Mix.Project
 
-  @source_url "https://github.com/revelrylabs/prodops_ex"
+  @source_url "https://github.com/revelrylabs/revelry_ai_ex"
 
   def project do
     [
-      app: :prodops_ex,
-      description: "An SDK for interacting with the ProdOps API",
+      app: :revelry_ai,
+      description: "An SDK for interacting with the RevelryAI API",
       license: "MIT",
       version: "0.2.0",
       elixir: "~> 1.12",
@@ -19,11 +19,11 @@ defmodule ProdopsEx.MixProject do
       ],
 
       # Docs
-      name: "ProdopsEx",
+      name: "RevelryAI",
       source_url: @source_url,
       docs: [
         main: "readme",
-        logo: "prodops-logo.png",
+        logo: "revelry-logo.png",
         extras: ["README.md", "LICENSE", "CONTRIBUTING.md", "RELEASES.md", "CODE_OF_CONDUCT.md"]
       ]
     ]
@@ -41,7 +41,7 @@ defmodule ProdopsEx.MixProject do
   end
 
   defp copy_logo(_) do
-    File.cp!("./prodops-logo.png", "./doc/prodops-logo.png")
+    File.cp!("./revelry-logo.png", "./doc/revelry-logo.png")
   end
 
   # Run "mix help deps" to learn about dependencies.

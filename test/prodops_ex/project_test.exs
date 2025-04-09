@@ -1,9 +1,9 @@
-defmodule ProdopsEx.ProjectTest do
+defmodule RevelryAI.ProjectTest do
   use ExUnit.Case, async: true
   use Mimic
 
-  alias ProdopsEx.Client
-  alias ProdopsEx.Project
+  alias RevelryAI.Client
+  alias RevelryAI.Project
 
   describe "list/1" do
     test "returns a list of all projects for a given team" do
@@ -16,7 +16,7 @@ defmodule ProdopsEx.ProjectTest do
            "status" => "ok",
            "response" => %{
              "projects" => [
-               %{"id" => 1, "name" => "ProdOps", "overview" => "This is the project overview"}
+               %{"id" => 1, "name" => "RevelryAI", "overview" => "This is the project overview"}
              ]
            }
          }}

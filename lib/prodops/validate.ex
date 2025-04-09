@@ -1,9 +1,9 @@
-defmodule ProdopsEx.Validate do
+defmodule RevelryAI.Validate do
   @moduledoc """
-  Handles validation operations for the ProdOps API.
+  Handles validation operations for the RevelryAI API.
   """
-  alias ProdopsEx.Client
-  alias ProdopsEx.Config
+  alias RevelryAI.Client
+  alias RevelryAI.Config
 
   @base_path "/api/v1/validate"
 
@@ -16,8 +16,8 @@ defmodule ProdopsEx.Validate do
 
   ## Example
 
-      iex> ProdopsEx.Validate.validate_api_key()
-      {:ok, %{status: "ok", response: %{"team_id" => 1, "team_name" => "ProdOps"}}}
+      iex> RevelryAI.Validate.validate_api_key()
+      {:ok, %{status: "ok", response: %{"team_id" => 1, "team_name" => "RevelryAI"}}}
   """
   @spec validate_api_key(Keyword.t()) :: {:ok, map} | {:error, any}
   def validate_api_key(config \\ []) do

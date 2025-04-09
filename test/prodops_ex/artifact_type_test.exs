@@ -1,9 +1,9 @@
-defmodule ProdopsEx.ArtifactTypeTest do
+defmodule RevelryAI.ArtifactTypeTest do
   use ExUnit.Case, async: true
   use Mimic
 
-  alias ProdopsEx.ArtifactType
-  alias ProdopsEx.Client
+  alias RevelryAI.ArtifactType
+  alias RevelryAI.Client
 
   describe "list/1" do
     test "returns a list of all artifact types for a given team" do

@@ -1,9 +1,9 @@
-defmodule ProdopsEx.DataCenterTest do
+defmodule RevelryAI.DataCenterTest do
   use ExUnit.Case, async: true
   use Mimic
 
-  alias ProdopsEx.Client
-  alias ProdopsEx.DataCenter
+  alias RevelryAI.Client
+  alias RevelryAI.DataCenter
 
   describe "upload_document/2" do
     test "uploads a document and returns the server response" do

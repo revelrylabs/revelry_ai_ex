@@ -1,22 +1,22 @@
-defmodule ProdopsEx.DataCenter do
+defmodule RevelryAI.DataCenter do
   @moduledoc """
-  Handles data center operations for the ProdOps API.
+  Handles data center operations for the RevelryAI API.
 
   The Data Center is used for:
    - uploading documents
    - managing collections of documents
    - connecting external Data Sources (GitHub, Jira, Notion, etc.)
 
-  Not all of these items are currently supported by the ProdOps API, so there
+  Not all of these items are currently supported by the RevelryAI API, so there
   is additional functionality in the UI not yet available in this SDK.
   """
-  alias ProdopsEx.Client
-  alias ProdopsEx.Config
+  alias RevelryAI.Client
+  alias RevelryAI.Config
 
   @base_path "/api/v1/data_center"
 
   @doc """
-  Uploads a document to the ProdOps data center.
+  Uploads a document to the RevelryAI data center.
 
   ## Parameters
 
@@ -25,7 +25,7 @@ defmodule ProdopsEx.DataCenter do
 
   ## Examples
 
-      iex> ProdopsEx.DataCenter.upload_document("/path/to/file.txt")
+      iex> RevelryAI.DataCenter.upload_document("/path/to/file.txt")
       {:ok, %{status: "ok", response: %{"id" => 4}}}
   """
   @spec upload_document(map, Keyword.t()) :: {:ok, map} | {:error, any}

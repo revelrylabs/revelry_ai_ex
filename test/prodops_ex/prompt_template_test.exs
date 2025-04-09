@@ -1,9 +1,9 @@
-defmodule ProdopsEx.PromptTemplateTest do
+defmodule RevelryAI.PromptTemplateTest do
   use ExUnit.Case, async: true
   use Mimic
 
-  alias ProdopsEx.Client
-  alias ProdopsEx.PromptTemplate
+  alias RevelryAI.Client
+  alias RevelryAI.PromptTemplate
 
   describe "list/2" do
     test "retrieves prompt templates for a given artifact type" do
