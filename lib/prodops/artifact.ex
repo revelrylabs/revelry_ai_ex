@@ -1,6 +1,6 @@
-defmodule ProdopsEx.Artifact do
+defmodule RevelryAI.Artifact do
   @moduledoc """
-  Handles artifact operations for the ProdOps API such as retrieving artifacts
+  Handles artifact operations for the RevelryAI API such as retrieving artifacts
   for a given project, creating artifacts, refining artifacts, and deleting artifacts.
 
   Artifacts are any generated content, i.e. user stories, blog posts, code
@@ -17,8 +17,8 @@ defmodule ProdopsEx.Artifact do
   - document attachments: an entire document, such as something uploaded by you,
     is inserted into the prompt template prior to generation
   """
-  alias ProdopsEx.Client
-  alias ProdopsEx.Config
+  alias RevelryAI.Client
+  alias RevelryAI.Config
 
   @base_path "/api/v1/artifact_types"
 
@@ -37,7 +37,7 @@ defmodule ProdopsEx.Artifact do
 
   ## Example
 
-      iex> ProdopsEx.Artifact.list_project_artifacts(1, "story")
+      iex> RevelryAI.Artifact.list_project_artifacts(1, "story")
       {:ok,
         %{
           status: "ok",
@@ -88,7 +88,7 @@ defmodule ProdopsEx.Artifact do
 
   ## Examples
 
-      iex> ProdopsEx.Artifact.create(%{
+      iex> RevelryAI.Artifact.create(%{
       ...>   prompt_template_id: 2,
       ...>   artifact_slug: "story",
       ...>   project_id: 1,
@@ -133,7 +133,7 @@ defmodule ProdopsEx.Artifact do
 
   ## Example
 
-      iex> ProdopsEx.Artifact.get(1, "story")
+      iex> RevelryAI.Artifact.get(1, "story")
       {:ok,
        %{
          status: "ok",
@@ -176,7 +176,7 @@ defmodule ProdopsEx.Artifact do
 
   ## Example
 
-      iex> ProdopsEx.Artifact.delete(1, "story")
+      iex> RevelryAI.Artifact.delete(1, "story")
       {:ok,
         %{status: "ok", response: %{"message" => "Artifact deleted successfully."}}}
   """
@@ -196,7 +196,7 @@ defmodule ProdopsEx.Artifact do
 
   ## Example
 
-      iex> ProdopsEx.Artifact.refine_artifact(%{
+      iex> RevelryAI.Artifact.refine_artifact(%{
       ...>   artifact_id: 1,
       ...>   artifact_slug: "story",
       ...>   refine_prompt: "Refine this story"
@@ -226,7 +226,7 @@ defmodule ProdopsEx.Artifact do
 
   ## Example
 
-      iex> ProdopsEx.Artifact.stream_refine_artifact(%{artifact_slug: "story", artifact_id: 1, refine_prompt: "some prompt"})
+      iex> RevelryAI.Artifact.stream_refine_artifact(%{artifact_slug: "story", artifact_id: 1, refine_prompt: "some prompt"})
   """
   @spec stream_refine_artifact(map, Keyword.t()) :: {:ok, map} | {:error, any}
   def stream_refine_artifact(params, config \\ []) do
@@ -247,7 +247,7 @@ defmodule ProdopsEx.Artifact do
 
   ## Example
 
-      iex> ProdopsEx.Artifact.stream_create_artifact(%{
+      iex> RevelryAI.Artifact.stream_create_artifact(%{
       ...>   prompt_template_id: 2,
       ...>   project_id: 1,
       ...>   artifact_slug: "story",

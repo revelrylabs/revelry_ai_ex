@@ -2,7 +2,7 @@
 
 ## API Key
 
-You'll need a [ProdOps API key](https://help.prodops.ai/docs/api/get-your-api-token)
+You'll need a [RevelryAI API key](https://help.revelry.ai/docs/api/get-your-api-token)
 to get started. Copy `config/config.example-secret.exs` to
 `config/config.secret.exs` and put your API key into that file.
 
@@ -29,7 +29,7 @@ You can run the library via the `iex` shell to run functions through it, e.g.:
 
 ```
 iex -S mix
-iex()> ProdopsEx.Artifact.get(123, "story")
+iex()> RevelryAI.Artifact.get(123, "story")
 ```
 
 ## Submitting Changes

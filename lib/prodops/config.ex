@@ -1,10 +1,10 @@
-defmodule ProdopsEx.Config do
+defmodule RevelryAI.Config do
   @moduledoc false
 
   @definition [
     api_url: [
       type: :string,
-      default: "https://app.prodops.ai"
+      default: "https://app.revelry.ai"
     ],
     api_key: [
       type: :string,
@@ -28,7 +28,7 @@ defmodule ProdopsEx.Config do
 
   ## Precedence
 
-  Configuration is applied with the following precendence (highest to
+  Configuration is applied with the following precedence (highest to
   lowest):
    - configuration passed into this function
    - application configuration (i.e. via config files)
@@ -39,7 +39,7 @@ defmodule ProdopsEx.Config do
   """
   @spec resolve_config(Keyword.t()) :: Keyword.t()
   def resolve_config(passed_in_config \\ []) do
-    application_config = Application.get_all_env(:prodops_ex)
+    application_config = Application.get_all_env(:revelry_ai)
 
     passed_in_http_options = passed_in_config[:http_options] || []
     application_http_options = application_config[:http_options] || []

@@ -1,4 +1,4 @@
 import Config
 
-config :prodops_ex,
-  api_key: "YOUR PRODOPS API KEY"
+config :revelry_ai,
+  api_key: "YOUR REVELRYAI API KEY"
