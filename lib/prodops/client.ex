@@ -1,8 +1,8 @@
-defmodule ProdopsEx.Client do
+defmodule RevelryAI.Client do
   @moduledoc false
   use HTTPoison.Base
 
-  alias ProdopsEx.Stream
+  alias RevelryAI.Stream
 
   def process_response_body(body) do
     {status, res} = Jason.decode(body)

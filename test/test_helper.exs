@@ -1,3 +1,3 @@
-Mimic.copy(ProdopsEx.Client)
+Mimic.copy(RevelryAI.Client)
 
 ExUnit.start()

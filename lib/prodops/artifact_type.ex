@@ -1,13 +1,13 @@
-defmodule ProdopsEx.ArtifactType do
+defmodule RevelryAI.ArtifactType do
   @moduledoc """
-  Handles artifact type operations for the ProdOps API.
+  Handles artifact type operations for the RevelryAI API.
 
   These represent types of outputs. They may be things like user stories, code
   snippets, blog posts, or anything else that has been defined within the
-  ProdOps UI. They are used to classify generated Artifacts into groups.
+  RevelryAI UI. They are used to classify generated Artifacts into groups.
   """
-  alias ProdopsEx.Client
-  alias ProdopsEx.Config
+  alias RevelryAI.Client
+  alias RevelryAI.Config
 
   @base_path "/api/v1/artifact_types"
 
@@ -16,7 +16,7 @@ defmodule ProdopsEx.ArtifactType do
 
   ## Examples
 
-      iex> ProdopsEx.ArtifactType.list()
+      iex> RevelryAI.ArtifactType.list()
       {:ok,
         %{
           status: "ok",

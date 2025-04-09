@@ -1,13 +1,13 @@
-defmodule ProdopsEx.Project do
+defmodule RevelryAI.Project do
   @moduledoc """
-  Handles project operations for the ProdOps API.
+  Handles project operations for the RevelryAI API.
 
   A Project is used for organization, and likely represents some real-world
   project, such as development of an application. Some resources can be
   Project-scoped. A Team may have multiple Projects.
   """
-  alias ProdopsEx.Client
-  alias ProdopsEx.Config
+  alias RevelryAI.Client
+  alias RevelryAI.Config
 
   @base_path "/api/v1/projects"
 
@@ -24,7 +24,7 @@ defmodule ProdopsEx.Project do
 
   ## Examples
 
-      iex> ProdopsEx.Project.list()
+      iex> RevelryAI.Project.list()
       {:ok,
         %{
           status: "ok",

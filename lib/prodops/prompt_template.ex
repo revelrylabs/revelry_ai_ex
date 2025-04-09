@@ -1,6 +1,6 @@
-defmodule ProdopsEx.PromptTemplate do
+defmodule RevelryAI.PromptTemplate do
   @moduledoc """
-  Handles prompt template operations for the ProdOps API.
+  Handles prompt template operations for the RevelryAI API.
 
   Prompt Templates are the building blocks used for generating Artifacts.
 
@@ -34,10 +34,10 @@ defmodule ProdopsEx.PromptTemplate do
   into the prompt prior to generation. This technique is known as
   Retrieval-Augmented Generation.
 
-  For more information, see the [ProdOps.AI Prompts help page](https://help.prodops.ai/docs/category/prompts).
+  For more information, see the [RevelryAI Prompts help page](https://help.revelry.ai/docs/category/prompts).
   """
-  alias ProdopsEx.Client
-  alias ProdopsEx.Config
+  alias RevelryAI.Client
+  alias RevelryAI.Config
 
   @base_path "/api/v1/artifact_types"
 
@@ -50,7 +50,7 @@ defmodule ProdopsEx.PromptTemplate do
   - `config` (optional): a configuration map used to override default config values
 
   ## Example
-      iex> ProdopsEx.PromptTemplate.list("questions")
+      iex> RevelryAI.PromptTemplate.list("questions")
   	{:ok,
   	 %{
   		 status: "ok",
