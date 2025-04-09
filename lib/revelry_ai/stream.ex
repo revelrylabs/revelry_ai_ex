@@ -63,9 +63,10 @@ defmodule RevelryAI.Stream do
             %HTTPoison.AsyncChunk{chunk: chunk} ->
               data =
                 chunk
-                |> String.split("\n")
-                |> Enum.filter(fn line -> String.starts_with?(line, "data: ") end)
-                |> Enum.map(fn line -> String.trim_leading(line, "data: ") end)
+                |> String.split("\n\n")
+                |> Enum.flat_map(fn data ->
+                  parse_data(data)
+                end)
 
               HTTPoison.stream_next(res)
               {data, res}
@@ -78,5 +79,29 @@ defmodule RevelryAI.Stream do
         :hackney.stop_async(id)
       end
     )
+  end
+
+  defp parse_data("data: " <> content) do
+    decoded = decode_json_content(content)
+    [decoded]
+  end
+
+  defp parse_data(_not_data) do
+    []
+  end
+
+  defp decode_json_content(data) do
+    case Jason.decode(data) do
+      {:ok, %{"content" => content}} ->
+        content
+
+      {:ok, map} when is_map(map) ->
+        # For response_body events or other structured data
+        map
+
+      {:error, _error} ->
+        # Not JSON or doesn't have content field, return as is
+        data
+    end
   end
 end
