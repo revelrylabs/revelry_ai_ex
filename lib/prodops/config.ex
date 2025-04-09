@@ -4,7 +4,7 @@ defmodule RevelryAI.Config do
   @definition [
     api_url: [
       type: :string,
-      default: "https://app.revelry.ai/"
+      default: "https://app.revelry.ai"
     ],
     api_key: [
       type: :string,
