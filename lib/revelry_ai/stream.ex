@@ -64,19 +64,9 @@ defmodule RevelryAI.Stream do
               data =
                 chunk
                 |> String.split("\n\n")
-                |> Enum.map(fn event ->
-                  event
-                  |> String.split("\n")
-                  |> Enum.filter(fn line -> String.starts_with?(line, "data: ") end)
-                  |> Enum.map(fn line ->
-                    line
-                    |> String.trim_leading("data: ")
-                    |> decode_json_content()
-                  end)
-                  |> Enum.filter(fn content -> content != "" end)
+                |> Enum.flat_map(fn data ->
+                  parse_data(data)
                 end)
-                |> List.flatten()
-                |> Enum.filter(fn data -> data != "" end)
 
               HTTPoison.stream_next(res)
               {data, res}
@@ -91,6 +81,23 @@ defmodule RevelryAI.Stream do
     )
   end
 
+  defp parse_data("") do
+    []
+  end
+
+  defp parse_data("event: artifact_content") do
+    []
+  end
+
+  defp parse_data("event: response_body\n") do
+    []
+  end
+
+  defp parse_data("data: " <> content) do
+    decoded = decode_json_content(content)
+    [decoded]
+  end
+
   # Attempt to decode JSON content, extract the "content" field if present
   # Falls back to the original string if it's not valid JSON
   defp decode_json_content(data) do
@@ -100,7 +107,7 @@ defmodule RevelryAI.Stream do
 
       {:ok, map} when is_map(map) ->
         # For response_body events or other structured data
-        data
+        map
 
       _ ->
         # Not JSON or doesn't have content field, return as is
