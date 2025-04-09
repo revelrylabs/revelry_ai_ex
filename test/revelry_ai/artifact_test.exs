@@ -5,11 +5,25 @@ defmodule RevelryAI.ArtifactTest do
   alias RevelryAI.Artifact
   alias RevelryAI.Client
 
+  setup do
+    %{
+      config: [
+        http_options: [recv_timeout: 60_000],
+        api_url: "https://api.example.com",
+        api_key: "secret_key"
+      ],
+      project_id: 1,
+      artifact_id: 1,
+      artifact_slug: "story"
+    }
+  end
+
   describe "list_project_artifacts/3" do
-    test "returns a list of artifacts for a given project and artifact type" do
-      config = [api_url: "https://api.example.com", api_key: "secret_key"]
-      project_id = 1
-      artifact_slug = "story"
+    test "returns a list of artifacts for a given project and artifact type", %{
+      config: config,
+      project_id: project_id,
+      artifact_slug: artifact_slug
+    } do
       full_url = "#{config[:api_url]}/api/v1/artifact_types/#{artifact_slug}/artifacts?project_id=#{project_id}"
 
       response = {:ok, %{"status" => "ok", "response" => %{"artifacts" => [%{"id" => 1, "name" => "Artifact Name"}]}}}
@@ -20,22 +34,20 @@ defmodule RevelryAI.ArtifactTest do
   end
 
   describe "create/2" do
-    test "creates an artifact with the given parameters" do
-      config = [
-        http_options: [recv_timeout: 60_000],
-        api_url: "https://api.example.com",
-        api_key: "secret_key"
-      ]
-
+    test "creates an artifact with the given parameters", %{
+      config: config,
+      project_id: project_id,
+      artifact_slug: artifact_slug
+    } do
       params = %{
         prompt_template_id: 2,
         inputs: [%{name: "Context", value: "this is a test"}],
         fire_and_forget: true,
-        artifact_slug: "story",
-        project_id: 1
+        artifact_slug: artifact_slug,
+        project_id: project_id
       }
 
-      full_url = "#{config[:api_url]}/api/v1/artifact_types/story/artifacts?project_id=1"
+      full_url = "#{config[:api_url]}/api/v1/artifact_types/#{artifact_slug}/artifacts?project_id=#{project_id}"
 
       response = {:ok, %{"artifact_id" => 123, "status" => "created"}}
 
@@ -47,13 +59,43 @@ defmodule RevelryAI.ArtifactTest do
 
       assert Artifact.create(params, config) == response
     end
+
+    test "creates an artifact with streaming", %{config: config, project_id: project_id, artifact_slug: artifact_slug} do
+      params = %{
+        prompt_template_id: 2,
+        inputs: [%{name: "Context", value: "this is a streaming test"}],
+        stream: true,
+        artifact_slug: artifact_slug,
+        project_id: project_id
+      }
+
+      full_url = "#{config[:api_url]}/api/v1/artifact_types/#{artifact_slug}/artifacts/stream?project_id=#{project_id}"
+
+      mock_stream = [
+        "Hello\n",
+        "World\n",
+        %{
+          "status" => "ok",
+          "response" => %{
+            "artifact" => %{
+              "content" => "Hello\nWorld\n",
+              "id" => 123
+            }
+          }
+        }
+      ]
+
+      expect(Client, :api_post, fn ^full_url, %{stream: true}, ^config ->
+        mock_stream
+      end)
+
+      result_stream = Artifact.stream_create_artifact(params, config)
+      assert result_stream == mock_stream
+    end
   end
 
   describe "get/3" do
-    test "retrieves an artifact by its ID" do
-      config = [api_url: "https://api.example.com", api_key: "secret_key"]
-      artifact_id = 1
-      artifact_slug = "story"
+    test "retrieves an artifact by its ID", %{config: config, artifact_id: artifact_id, artifact_slug: artifact_slug} do
       full_url = "#{config[:api_url]}/api/v1/artifact_types/#{artifact_slug}/artifacts/#{artifact_id}"
 
       response = {:ok, %{"id" => artifact_id, "name" => "Artifact Name"}}
@@ -64,10 +106,7 @@ defmodule RevelryAI.ArtifactTest do
   end
 
   describe "delete/3" do
-    test "deletes an artifact by its ID" do
-      config = [api_url: "https://api.example.com", api_key: "secret_key"]
-      artifact_id = 1
-      artifact_slug = "story"
+    test "deletes an artifact by its ID", %{config: config, artifact_id: artifact_id, artifact_slug: artifact_slug} do
       full_url = "#{config[:api_url]}/api/v1/artifact_types/#{artifact_slug}/artifacts/#{artifact_id}"
 
       response = {:ok, %{"status" => "ok", "response" => %{"message" => "Artifact deleted successfully."}}}
@@ -78,10 +117,13 @@ defmodule RevelryAI.ArtifactTest do
   end
 
   describe "refine_artifact/2" do
-    test "refines an artifact by submitting a request with the required parameters" do
-      config = [api_url: "https://api.example.com", api_key: "secret_key"]
-      params = %{artifact_id: 1, artifact_slug: "story", refine_prompt: "Refine this story"}
-      full_url = "#{config[:api_url]}/api/v1/artifact_types/story/artifacts/1/refine"
+    test "refines an artifact by submitting a request with the required parameters", %{
+      config: config,
+      artifact_id: artifact_id,
+      artifact_slug: artifact_slug
+    } do
+      params = %{artifact_id: artifact_id, artifact_slug: artifact_slug, refine_prompt: "Refine this story"}
+      full_url = "#{config[:api_url]}/api/v1/artifact_types/#{artifact_slug}/artifacts/#{artifact_id}/refine"
 
       response = {:ok, %{"status" => "ok", "response" => %{"message" => "Artifact refined successfully."}}}
 
@@ -91,10 +133,13 @@ defmodule RevelryAI.ArtifactTest do
   end
 
   describe "stream_refine_artifact/2" do
-    test "streams refinement of an artifact by submitting a request with the required parameters" do
-      config = [api_url: "https://api.example.com", api_key: "secret_key"]
-      params = %{stream: true, artifact_id: 1, artifact_slug: "story", refine_prompt: "refine prompt"}
-      full_url = "#{config[:api_url]}/api/v1/artifact_types/story/artifacts/1/refine_stream"
+    test "streams refinement of an artifact by submitting a request with the required parameters", %{
+      config: config,
+      artifact_id: artifact_id,
+      artifact_slug: artifact_slug
+    } do
+      params = %{stream: true, artifact_id: artifact_id, artifact_slug: artifact_slug, refine_prompt: "refine prompt"}
+      full_url = "#{config[:api_url]}/api/v1/artifact_types/#{artifact_slug}/artifacts/#{artifact_id}/refine_stream"
 
       response = {:ok, %{"status" => "ok", "response" => %{"message" => "Artifact stream refined successfully."}}}
 

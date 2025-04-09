@@ -81,25 +81,15 @@ defmodule RevelryAI.Stream do
     )
   end
 
-  defp parse_data("") do
-    []
-  end
-
-  defp parse_data("event: artifact_content") do
-    []
-  end
-
-  defp parse_data("event: response_body\n") do
-    []
-  end
-
   defp parse_data("data: " <> content) do
     decoded = decode_json_content(content)
     [decoded]
   end
 
-  # Attempt to decode JSON content, extract the "content" field if present
-  # Falls back to the original string if it's not valid JSON
+  defp parse_data(_not_data) do
+    []
+  end
+
   defp decode_json_content(data) do
     case Jason.decode(data) do
       {:ok, %{"content" => content}} ->
@@ -109,11 +99,9 @@ defmodule RevelryAI.Stream do
         # For response_body events or other structured data
         map
 
-      _ ->
+      {:error, _error} ->
         # Not JSON or doesn't have content field, return as is
         data
     end
-  rescue
-    _ -> data
   end
 end
