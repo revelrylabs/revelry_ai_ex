@@ -68,8 +68,14 @@ defmodule RevelryAI.Stream do
                   event
                   |> String.split("\n")
                   |> Enum.filter(fn line -> String.starts_with?(line, "data: ") end)
-                  |> Enum.map_join("\n", fn line -> String.trim_leading(line, "data: ") end)
+                  |> Enum.map(fn line ->
+                    line
+                    |> String.trim_leading("data: ")
+                    |> decode_json_content()
+                  end)
+                  |> Enum.filter(fn content -> content != "" end)
                 end)
+                |> List.flatten()
                 |> Enum.filter(fn data -> data != "" end)
 
               HTTPoison.stream_next(res)
@@ -83,5 +89,24 @@ defmodule RevelryAI.Stream do
         :hackney.stop_async(id)
       end
     )
+  end
+
+  # Attempt to decode JSON content, extract the "content" field if present
+  # Falls back to the original string if it's not valid JSON
+  defp decode_json_content(data) do
+    case Jason.decode(data) do
+      {:ok, %{"content" => content}} ->
+        content
+
+      {:ok, map} when is_map(map) ->
+        # For response_body events or other structured data
+        data
+
+      _ ->
+        # Not JSON or doesn't have content field, return as is
+        data
+    end
+  rescue
+    _ -> data
   end
 end
