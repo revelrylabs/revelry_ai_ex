@@ -61,12 +61,10 @@ defmodule RevelryAI.Stream do
               {[], res}
 
             %HTTPoison.AsyncChunk{chunk: chunk} ->
+              {events, _} = ServerSentEvents.parse(chunk)
+
               data =
-                chunk
-                |> String.split("\n\n")
-                |> Enum.flat_map(fn data ->
-                  parse_data(data)
-                end)
+                Enum.flat_map(events, &parse_events/1)
 
               HTTPoison.stream_next(res)
               {data, res}
@@ -81,12 +79,17 @@ defmodule RevelryAI.Stream do
     )
   end
 
-  defp parse_data("data: " <> content) do
+  defp parse_events(%{data: content}) do
     decoded = decode_json_content(content)
     [decoded]
   end
 
-  defp parse_data(_not_data) do
+  defp parse_events([%{data: content}]) do
+    decoded = decode_json_content(content)
+    [decoded]
+  end
+
+  defp parse_events(_) do
     []
   end
 
