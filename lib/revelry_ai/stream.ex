@@ -1,5 +1,15 @@
 defmodule RevelryAI.Stream do
-  @moduledoc false
+  @moduledoc """
+  Creates a readable stream of information that another process can consume.
+  """
+
+  @doc """
+  This is used for endpoints that support returning text as it is generated,
+  rather than waiting for the entire generation output to be ready.
+
+  Note: We use a buffer to store the response until we have a complete chunk. While RevelryAI usually returns the entire response at once, this is not guaranteed if
+  streaming across a network boundary.
+  """
   def new(start_fun) do
     Stream.resource(
       fn ->
@@ -55,7 +65,6 @@ defmodule RevelryAI.Stream do
     )
   end
 
-  # Modify this function if your ServerSentEvents.parse/1 returns differently
   defp parse_events(%{data: content}), do: [decode_json_content(content)]
   defp parse_events([%{data: content}]), do: [decode_json_content(content)]
   defp parse_events(_), do: []
