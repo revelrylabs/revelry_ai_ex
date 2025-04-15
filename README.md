@@ -25,7 +25,7 @@ Add RevelryAI to your mix.exs:
 ```elixir
 def deps do
   [
-    {:revelry_ai, "~> 0.1.0"}
+    {:revelry_ai, "~> 0.2.0"}
   ]
 end
 ```
