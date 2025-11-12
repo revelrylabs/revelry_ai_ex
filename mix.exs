@@ -54,7 +54,7 @@ defmodule RevelryAI.MixProject do
       {:jason, "~> 1.2"},
       {:mimic, "~> 1.7", only: :test},
       {:nimble_options, "~> 1.0"},
-      {:styler, "~> 0.7", only: [:dev, :test], runtime: false},
+      {:styler, "~> 1.9", only: [:dev, :test], runtime: false},
       {:server_sent_events, "~> 0.2.0"}
     ]
   end
