@@ -52,7 +52,7 @@ defmodule RevelryAI.MixProject do
       {:ex_doc, "~> 0.29", only: [:dev, :test], runtime: false},
       {:httpoison, "~> 2.2"},
       {:jason, "~> 1.2"},
-      {:mimic, "~> 1.7", only: :test},
+      {:mimic, "~> 2.1", only: :test},
       {:nimble_options, "~> 1.0"},
       {:styler, "~> 1.9", only: [:dev, :test], runtime: false},
       {:server_sent_events, "~> 0.2.0"}
