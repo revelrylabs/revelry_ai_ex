@@ -3,7 +3,7 @@ defmodule RevelryAI.ConfigTest do
 
   alias RevelryAI.Config
 
-  doctest RevelryAI.Config
+  doctest Config
 
   describe "resolve_config/1" do
     test "it uses default values" do
