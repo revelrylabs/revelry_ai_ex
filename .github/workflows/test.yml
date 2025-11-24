@@ -25,7 +25,7 @@ jobs:
           elixir-version: ${{matrix.elixir}}
 
       - name: Checkout code
-        uses: actions/checkout@v5
+        uses: actions/checkout@v6
 
       - name: Cache deps
         id: cache-deps
