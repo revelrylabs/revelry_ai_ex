@@ -13,10 +13,10 @@ jobs:
     strategy:
       matrix:
         include:
-          - otp: "24"
-            elixir: "1.12"
           - otp: "26"
             elixir: "1.16"
+          - otp: "28"
+            elixir: "1.19"
     steps:
       - name: Set up Elixir
         uses: erlef/setup-beam@v1
@@ -57,7 +57,7 @@ jobs:
         run: mix compile --warnings-as-errors
 
       - name: Check formatting
-        if: matrix.elixir == '1.16' && matrix.otp == '26'
+        if: matrix.elixir == '1.19' && matrix.otp == '28'
         run: mix format --check-formatted
 
       - name: Cache PLT files for Dialyzer
@@ -71,7 +71,7 @@ jobs:
             plt-cache-
 
       - name: Check function specs with Dialyzer
-        if: matrix.elixir == '1.16' && matrix.otp == '26'
+        if: matrix.elixir == '1.19' && matrix.otp == '28'
         run: mix dialyzer
 
       - name: Run tests
