@@ -9,3 +9,5 @@ erl_crash.dump
 /config/*.secret.exs
 .elixir_ls/
 test_script.exs
+.idea/
+*.iml
