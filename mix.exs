@@ -9,7 +9,7 @@ defmodule RevelryAI.MixProject do
       description: "An SDK for interacting with the RevelryAI API",
       license: "MIT",
       version: "0.2.0",
-      elixir: "~> 1.12",
+      elixir: "~> 1.16",
       deps: deps(),
       compilers: [:yecc, :leex] ++ Mix.compilers(),
       aliases: aliases(),
