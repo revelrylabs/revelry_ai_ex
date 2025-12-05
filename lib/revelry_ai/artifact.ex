@@ -101,11 +101,7 @@ defmodule RevelryAI.Artifact do
   """
   @spec create(map(), Keyword.t()) :: {:ok, map()} | {:error, term()}
   def create(
-        %{
-          prompt_template_id: prompt_template_id,
-          artifact_slug: artifact_slug,
-          project_id: project_id
-        } = params,
+        %{prompt_template_id: prompt_template_id, artifact_slug: artifact_slug, project_id: project_id} = params,
         config \\ []
       ) do
     config = Config.resolve_config(config)
@@ -115,8 +111,10 @@ defmodule RevelryAI.Artifact do
     inputs = Map.get(params, :inputs, [])
 
     body =
-      %{prompt_template_id: prompt_template_id, inputs: inputs, fire_and_forget: fire_and_forget}
-      |> maybe_add_model_configuration_id(params)
+      maybe_add_model_configuration_id(
+        %{prompt_template_id: prompt_template_id, inputs: inputs, fire_and_forget: fire_and_forget},
+        params
+      )
 
     Client.api_post(url <> path, body, config)
   end
@@ -158,8 +156,7 @@ defmodule RevelryAI.Artifact do
        }}
   """
   @spec get(integer(), String.t(), Keyword.t()) :: {:ok, map} | {:error, any}
-  def get(artifact_id, artifact_slug, config \\ [])
-      when is_integer(artifact_id) and is_binary(artifact_slug) do
+  def get(artifact_id, artifact_slug, config \\ []) when is_integer(artifact_id) and is_binary(artifact_slug) do
     config = Config.resolve_config(config)
     endpoint = url(config) <> "/#{artifact_slug}/artifacts/#{artifact_id}"
     Client.api_get(endpoint, config)
@@ -181,8 +178,7 @@ defmodule RevelryAI.Artifact do
         %{status: "ok", response: %{"message" => "Artifact deleted successfully."}}}
   """
   @spec delete(integer(), String.t(), Keyword.t()) :: {:ok, map} | {:error, any}
-  def delete(artifact_id, artifact_slug, config \\ [])
-      when is_integer(artifact_id) and is_binary(artifact_slug) do
+  def delete(artifact_id, artifact_slug, config \\ []) when is_integer(artifact_id) and is_binary(artifact_slug) do
     config = Config.resolve_config(config)
     endpoint = url(config) <> "/#{artifact_slug}/artifacts/#{artifact_id}"
     Client.api_delete(endpoint, config)
@@ -211,10 +207,7 @@ defmodule RevelryAI.Artifact do
           },
           Keyword.t()
         ) :: {:ok, map} | {:error, any}
-  def refine_artifact(
-        %{artifact_slug: artifact_slug, artifact_id: artifact_id} = params,
-        config \\ []
-      ) do
+  def refine_artifact(%{artifact_slug: artifact_slug, artifact_id: artifact_id} = params, config \\ []) do
     config = Config.resolve_config(config)
     url = url(config) <> "/#{artifact_slug}/artifacts/#{artifact_id}/refine"
     Client.api_post(url, params, config)
@@ -284,8 +277,7 @@ defmodule RevelryAI.Artifact do
     inputs = Map.get(params, :inputs, [])
 
     body =
-      %{prompt_template_id: prompt_template_id, inputs: inputs, stream: true}
-      |> maybe_add_model_configuration_id(params)
+      maybe_add_model_configuration_id(%{prompt_template_id: prompt_template_id, inputs: inputs, stream: true}, params)
 
     Client.api_post(endpoint, body, config)
   end
