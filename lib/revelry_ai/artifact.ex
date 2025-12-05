@@ -99,19 +99,13 @@ defmodule RevelryAI.Artifact do
       ...> })
       {:ok, %{"artifact_id" => 123, "status" => "created"}}
   """
-  @spec create(
-          %{
-            prompt_template_id: integer(),
-            artifact_slug: String.t(),
-            project_id: integer(),
-            optional(:inputs) => list(),
-            optional(:fire_and_forget) => boolean(),
-            optional(:model_configuration_id) => integer()
-          },
-          Keyword.t()
-        ) :: {:ok, map()} | {:error, term()}
+  @spec create(map(), Keyword.t()) :: {:ok, map()} | {:error, term()}
   def create(
-        %{prompt_template_id: prompt_template_id, artifact_slug: artifact_slug, project_id: project_id} = params,
+        %{
+          prompt_template_id: prompt_template_id,
+          artifact_slug: artifact_slug,
+          project_id: project_id
+        } = params,
         config \\ []
       ) do
     config = Config.resolve_config(config)
@@ -164,7 +158,8 @@ defmodule RevelryAI.Artifact do
        }}
   """
   @spec get(integer(), String.t(), Keyword.t()) :: {:ok, map} | {:error, any}
-  def get(artifact_id, artifact_slug, config \\ []) when is_integer(artifact_id) and is_binary(artifact_slug) do
+  def get(artifact_id, artifact_slug, config \\ [])
+      when is_integer(artifact_id) and is_binary(artifact_slug) do
     config = Config.resolve_config(config)
     endpoint = url(config) <> "/#{artifact_slug}/artifacts/#{artifact_id}"
     Client.api_get(endpoint, config)
@@ -186,7 +181,8 @@ defmodule RevelryAI.Artifact do
         %{status: "ok", response: %{"message" => "Artifact deleted successfully."}}}
   """
   @spec delete(integer(), String.t(), Keyword.t()) :: {:ok, map} | {:error, any}
-  def delete(artifact_id, artifact_slug, config \\ []) when is_integer(artifact_id) and is_binary(artifact_slug) do
+  def delete(artifact_id, artifact_slug, config \\ [])
+      when is_integer(artifact_id) and is_binary(artifact_slug) do
     config = Config.resolve_config(config)
     endpoint = url(config) <> "/#{artifact_slug}/artifacts/#{artifact_id}"
     Client.api_delete(endpoint, config)
@@ -215,7 +211,10 @@ defmodule RevelryAI.Artifact do
           },
           Keyword.t()
         ) :: {:ok, map} | {:error, any}
-  def refine_artifact(%{artifact_slug: artifact_slug, artifact_id: artifact_id} = params, config \\ []) do
+  def refine_artifact(
+        %{artifact_slug: artifact_slug, artifact_id: artifact_id} = params,
+        config \\ []
+      ) do
     config = Config.resolve_config(config)
     url = url(config) <> "/#{artifact_slug}/artifacts/#{artifact_id}/refine"
     Client.api_post(url, params, config)
@@ -236,9 +235,19 @@ defmodule RevelryAI.Artifact do
   @spec stream_refine_artifact(map, Keyword.t()) :: {:ok, map} | {:error, any}
   def stream_refine_artifact(params, config \\ []) do
     config = Config.resolve_config(config)
-    %{artifact_slug: artifact_slug, artifact_id: artifact_id, refine_prompt: refine_prompt} = params
+
+    %{artifact_slug: artifact_slug, artifact_id: artifact_id, refine_prompt: refine_prompt} =
+      params
+
     endpoint = url(config) <> "/#{artifact_slug}/artifacts/#{artifact_id}/refine_stream"
-    body = %{artifact_slug: artifact_slug, artifact_id: artifact_id, refine_prompt: refine_prompt, stream: true}
+
+    body = %{
+      artifact_slug: artifact_slug,
+      artifact_id: artifact_id,
+      refine_prompt: refine_prompt,
+      stream: true
+    }
+
     Client.api_post(endpoint, body, config)
   end
 
@@ -264,7 +273,13 @@ defmodule RevelryAI.Artifact do
   @spec stream_create_artifact(map, Keyword.t()) :: {:ok, map} | {:error, any}
   def stream_create_artifact(params, config \\ []) do
     config = Config.resolve_config(config)
-    %{artifact_slug: artifact_slug, prompt_template_id: prompt_template_id, project_id: project_id} = params
+
+    %{
+      artifact_slug: artifact_slug,
+      prompt_template_id: prompt_template_id,
+      project_id: project_id
+    } = params
+
     endpoint = url(config) <> "/#{artifact_slug}/artifacts/stream?project_id=#{project_id}"
     inputs = Map.get(params, :inputs, [])
 

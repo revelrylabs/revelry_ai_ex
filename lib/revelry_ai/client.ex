@@ -70,6 +70,14 @@ defmodule RevelryAI.Client do
     |> handle_response()
   end
 
+  def api_patch(url, body_params \\ %{}, config) do
+    body = Jason.encode!(body_params)
+
+    url
+    |> patch(body, request_headers(config), config[:http_options])
+    |> handle_response()
+  end
+
   defp request_headers(config) do
     [
       {"Authorization", "Bearer #{config[:api_key]}"},
