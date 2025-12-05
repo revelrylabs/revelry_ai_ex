@@ -104,8 +104,9 @@ defmodule RevelryAI.Artifact do
             prompt_template_id: integer(),
             artifact_slug: String.t(),
             project_id: integer(),
-            inputs: list(),
-            fire_and_forget: boolean()
+            optional(:inputs) => list(),
+            optional(:fire_and_forget) => boolean(),
+            optional(:model_configuration_id) => integer()
           },
           Keyword.t()
         ) :: {:ok, map()} | {:error, term()}
@@ -118,7 +119,11 @@ defmodule RevelryAI.Artifact do
     path = "/#{artifact_slug}/artifacts?project_id=#{project_id}"
     fire_and_forget = Map.get(params, :fire_and_forget, false)
     inputs = Map.get(params, :inputs, [])
-    body = %{prompt_template_id: prompt_template_id, inputs: inputs, fire_and_forget: fire_and_forget}
+
+    body =
+      %{prompt_template_id: prompt_template_id, inputs: inputs, fire_and_forget: fire_and_forget}
+      |> maybe_add_model_configuration_id(params)
+
     Client.api_post(url <> path, body, config)
   end
 
@@ -262,7 +267,16 @@ defmodule RevelryAI.Artifact do
     %{artifact_slug: artifact_slug, prompt_template_id: prompt_template_id, project_id: project_id} = params
     endpoint = url(config) <> "/#{artifact_slug}/artifacts/stream?project_id=#{project_id}"
     inputs = Map.get(params, :inputs, [])
-    body = %{prompt_template_id: prompt_template_id, inputs: inputs, stream: true}
+
+    body =
+      %{prompt_template_id: prompt_template_id, inputs: inputs, stream: true}
+      |> maybe_add_model_configuration_id(params)
+
     Client.api_post(endpoint, body, config)
   end
+
+  defp maybe_add_model_configuration_id(body, %{model_configuration_id: model_configuration_id}),
+    do: Map.put(body, :model_configuration_id, model_configuration_id)
+
+  defp maybe_add_model_configuration_id(body, _params), do: body
 end
