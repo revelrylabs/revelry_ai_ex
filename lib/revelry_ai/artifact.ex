@@ -99,16 +99,7 @@ defmodule RevelryAI.Artifact do
       ...> })
       {:ok, %{"artifact_id" => 123, "status" => "created"}}
   """
-  @spec create(
-          %{
-            prompt_template_id: integer(),
-            artifact_slug: String.t(),
-            project_id: integer(),
-            inputs: list(),
-            fire_and_forget: boolean()
-          },
-          Keyword.t()
-        ) :: {:ok, map()} | {:error, term()}
+  @spec create(map(), Keyword.t()) :: {:ok, map()} | {:error, term()}
   def create(
         %{prompt_template_id: prompt_template_id, artifact_slug: artifact_slug, project_id: project_id} = params,
         config \\ []
@@ -118,7 +109,13 @@ defmodule RevelryAI.Artifact do
     path = "/#{artifact_slug}/artifacts?project_id=#{project_id}"
     fire_and_forget = Map.get(params, :fire_and_forget, false)
     inputs = Map.get(params, :inputs, [])
-    body = %{prompt_template_id: prompt_template_id, inputs: inputs, fire_and_forget: fire_and_forget}
+
+    body =
+      maybe_add_model_configuration_id(
+        %{prompt_template_id: prompt_template_id, inputs: inputs, fire_and_forget: fire_and_forget},
+        params
+      )
+
     Client.api_post(url <> path, body, config)
   end
 
@@ -231,9 +228,19 @@ defmodule RevelryAI.Artifact do
   @spec stream_refine_artifact(map, Keyword.t()) :: {:ok, map} | {:error, any}
   def stream_refine_artifact(params, config \\ []) do
     config = Config.resolve_config(config)
-    %{artifact_slug: artifact_slug, artifact_id: artifact_id, refine_prompt: refine_prompt} = params
+
+    %{artifact_slug: artifact_slug, artifact_id: artifact_id, refine_prompt: refine_prompt} =
+      params
+
     endpoint = url(config) <> "/#{artifact_slug}/artifacts/#{artifact_id}/refine_stream"
-    body = %{artifact_slug: artifact_slug, artifact_id: artifact_id, refine_prompt: refine_prompt, stream: true}
+
+    body = %{
+      artifact_slug: artifact_slug,
+      artifact_id: artifact_id,
+      refine_prompt: refine_prompt,
+      stream: true
+    }
+
     Client.api_post(endpoint, body, config)
   end
 
@@ -259,10 +266,24 @@ defmodule RevelryAI.Artifact do
   @spec stream_create_artifact(map, Keyword.t()) :: {:ok, map} | {:error, any}
   def stream_create_artifact(params, config \\ []) do
     config = Config.resolve_config(config)
-    %{artifact_slug: artifact_slug, prompt_template_id: prompt_template_id, project_id: project_id} = params
+
+    %{
+      artifact_slug: artifact_slug,
+      prompt_template_id: prompt_template_id,
+      project_id: project_id
+    } = params
+
     endpoint = url(config) <> "/#{artifact_slug}/artifacts/stream?project_id=#{project_id}"
     inputs = Map.get(params, :inputs, [])
-    body = %{prompt_template_id: prompt_template_id, inputs: inputs, stream: true}
+
+    body =
+      maybe_add_model_configuration_id(%{prompt_template_id: prompt_template_id, inputs: inputs, stream: true}, params)
+
     Client.api_post(endpoint, body, config)
   end
+
+  defp maybe_add_model_configuration_id(body, %{model_configuration_id: model_configuration_id}),
+    do: Map.put(body, :model_configuration_id, model_configuration_id)
+
+  defp maybe_add_model_configuration_id(body, _params), do: body
 end
