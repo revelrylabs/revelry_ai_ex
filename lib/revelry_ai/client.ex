@@ -21,7 +21,7 @@ defmodule RevelryAI.Client do
 
   def handle_response(httpoison_response) do
     case httpoison_response do
-      {:ok, %HTTPoison.Response{status_code: 200, body: {:ok, body}}} ->
+      {:ok, %HTTPoison.Response{status_code: status_code, body: {:ok, body}}} when status_code in 200..299 ->
         res = Map.new(body, fn {k, v} -> {String.to_atom(k), v} end)
 
         {:ok, res}

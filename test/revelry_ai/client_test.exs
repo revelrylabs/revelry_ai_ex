@@ -9,6 +9,16 @@ defmodule RevelryAI.ClientTest do
       assert {:ok, %{key: "value"}} = res
     end
 
+    test "it should respond with success for other 2xx status codes such as 202" do
+      res =
+        RevelryAI.Client.handle_response(
+          {:ok,
+           %HTTPoison.Response{body: {:ok, %{"status" => "ok", "response" => %{"api_job_id" => 42}}}, status_code: 202}}
+        )
+
+      assert {:ok, %{status: "ok", response: %{"api_job_id" => 42}}} = res
+    end
+
     test "it should respond with error if HTTP status code is not 200" do
       res =
         RevelryAI.Client.handle_response(

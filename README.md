@@ -17,6 +17,7 @@ To provide a simple way to interact with the RevelryAI API from within Elixir.
 - Refine existing artifacts.
 - Upload documents to RevelryAI data center.
 - Stream the creation and refining of artifacts.
+- Run skills and create artifacts asynchronously via the v2 API.
 
 ## Installation
 
@@ -25,7 +26,7 @@ Add RevelryAI to your mix.exs:
 ```elixir
 def deps do
   [
-    {:revelry_ai, "~> 0.2.0"}
+    {:revelry_ai, "~> 0.3.0"}
   ]
 end
 ```
@@ -71,6 +72,48 @@ This will create a new artifact of the given artifact type for the given team ma
 {:ok, %{"artifact_id" => 123, "status" => "created"}}
 ```
 
+
+### V2 API (async)
+
+The v2 endpoints are asynchronous-only. Skills replace prompt templates as the
+way content is generated.
+
+Run a skill and poll for the result:
+
+```elixir
+{:ok, %{response: %{"api_job_id" => api_job_id}}} =
+  RevelryAI.V2.Skill.run(10, %{
+    project_id: 1,
+    inputs: [
+      %{name: "Context", value: "this is a test"}
+    ]
+  })
+
+{:ok, %{response: job}} = RevelryAI.V2.ApiJob.await(api_job_id, timeout: 300_000)
+
+job["status"]  #=> "completed" (or "failed" — see job["error_message"])
+job["content"] #=> the generated output
+```
+
+`RevelryAI.V2.ApiJob.await/2` accepts `interval` (default 2,000 ms) and
+`timeout` (default 120,000 ms) options; any other keys in the same keyword
+list are treated as configuration overrides (`api_key`, `api_url`,
+`http_options`). Use `RevelryAI.V2.ApiJob.get/2` to poll a job yourself.
+
+Create an artifact asynchronously — the request returns immediately with an
+`api_async_create_event_id`, and the completed artifact is delivered via
+webhook carrying the same ID for correlation:
+
+```elixir
+{:ok, %{response: %{"api_async_create_event_id" => event_id}}} =
+  RevelryAI.V2.Artifact.create(%{
+    skill_id: 10,
+    project_id: 1,
+    inputs: [
+      %{name: "Context", value: "this is a test"}
+    ]
+  })
+```
 
 ### RevelryAI Definitions 
 - Team: Synonymous with Company or Organization.  Teams can have one or many Users.  Teams can have details that define who they are, what they do, and what their culture represents.  Q: Are there constraints or limiters on Teams (e.g. domain) 
