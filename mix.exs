@@ -8,7 +8,7 @@ defmodule RevelryAI.MixProject do
       app: :revelry_ai,
       description: "An SDK for interacting with the RevelryAI API",
       license: "MIT",
-      version: "0.2.0",
+      version: "0.3.0",
       elixir: "~> 1.16",
       deps: deps(),
       compilers: [:yecc, :leex] ++ Mix.compilers(),
@@ -24,7 +24,7 @@ defmodule RevelryAI.MixProject do
       docs: [
         main: "readme",
         logo: "revelry-logo.png",
-        extras: ["README.md", "LICENSE", "CONTRIBUTING.md", "RELEASES.md", "CODE_OF_CONDUCT.md"]
+        extras: ["README.md", "CHANGELOG.md", "LICENSE", "CONTRIBUTING.md", "RELEASES.md", "CODE_OF_CONDUCT.md"]
       ]
     ]
   end
