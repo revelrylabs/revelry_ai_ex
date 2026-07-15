@@ -40,7 +40,7 @@ defmodule RevelryAI.ArtifactTest do
       artifact_slug: artifact_slug
     } do
       params = %{
-        prompt_template_id: 2,
+        skill_id: 2,
         inputs: [%{name: "Context", value: "this is a test"}],
         fire_and_forget: true,
         artifact_slug: artifact_slug,
@@ -51,8 +51,9 @@ defmodule RevelryAI.ArtifactTest do
 
       response = {:ok, %{"artifact_id" => 123, "status" => "created"}}
 
-      expect(Client, :api_post, fn url, _body, opts ->
+      expect(Client, :api_post, fn url, body, opts ->
         assert url == full_url
+        assert body == %{skill_id: 2, inputs: params.inputs, fire_and_forget: true}
         assert opts == config
         response
       end)
@@ -60,9 +61,21 @@ defmodule RevelryAI.ArtifactTest do
       assert Artifact.create(params, config) == response
     end
 
+    test "raises when skill_id is missing", %{config: config, project_id: project_id, artifact_slug: artifact_slug} do
+      params = %{
+        inputs: [%{name: "Context", value: "this is a test"}],
+        artifact_slug: artifact_slug,
+        project_id: project_id
+      }
+
+      assert_raise FunctionClauseError, fn ->
+        Artifact.create(params, config)
+      end
+    end
+
     test "creates an artifact with streaming", %{config: config, project_id: project_id, artifact_slug: artifact_slug} do
       params = %{
-        prompt_template_id: 2,
+        skill_id: 2,
         inputs: [%{name: "Context", value: "this is a streaming test"}],
         stream: true,
         artifact_slug: artifact_slug,

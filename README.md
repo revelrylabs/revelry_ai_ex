@@ -90,13 +90,16 @@ RevelryAI.ArtifactType.list()
 #=> {:ok, %{status: "ok", response: %{"artifact_types" => [%{"slug" => "story", ...}]}}}
 ```
 
-### Prompt templates
+### Skills
 
-Lists the prompt templates available for an artifact type, used with the v1
-create endpoint. (In v2, skills replace prompt templates.)
+Skills define how content is generated — a prompt with custom variables,
+document queries, and tool configuration. List the skills available for an
+artifact type to find the `skill_id` used when creating artifacts or running
+skills:
 
 ```elixir
-RevelryAI.PromptTemplate.list("story")
+RevelryAI.Skill.list("story")
+#=> {:ok, %{status: "ok", response: %{"skills" => [%{"id" => 1, "name" => "Question Answering", ...}]}}}
 ```
 
 ### Artifacts (v1)
@@ -106,7 +109,7 @@ and returns the artifact:
 
 ```elixir
 params = %{
-  prompt_template_id: 2,
+  skill_id: 2,
   artifact_slug: "story",
   project_id: 1,
   inputs: [
@@ -143,7 +146,7 @@ a final map containing the full response:
 
 ```elixir
 %{
-  prompt_template_id: 2,
+  skill_id: 2,
   artifact_slug: "story",
   project_id: 1,
   inputs: [%{name: "Context", value: "this is a test"}]
@@ -167,9 +170,8 @@ RevelryAI.DataCenter.upload_document("path/to/document.pdf")
 ### V2 API (async)
 
 The v2 endpoints are asynchronous-only: they return immediately, and you
-collect the result afterward. Skills replace prompt templates as the way
-content is generated. There are two completion mechanisms, depending on the
-endpoint:
+collect the result afterward. There are two completion mechanisms, depending
+on the endpoint:
 
 | Endpoint | Returns immediately with | Get the result via |
 |---|---|---|
@@ -249,8 +251,8 @@ RevelryAI.Artifact.get(artifact_id_from_webhook, "story")
 - Team: Synonymous with Company or Organization.  Teams can have one or many Users.  Teams can have details that define who they are, what they do, and what their culture represents.  Q: Are there constraints or limiters on Teams (e.g. domain) 
 - Users: A member of a team.  A person who uses RevelryAI to create something.  Users are defined by email address and constrained by that email address to one Team.  
 - Project: A software development (or other) project, product, or idea, generally defined with a goal.  A RevelryAI project could have a start and a finish, like a typical project (Build a wordpress marketing site for NOLA PD; Update the Revelry website with new creative and branding).  As well, a RevelryAI project could be an ongoing effort, such as a product (Platform, Peerbot, Apple Music).  At its most basic, a RevelryAI project is the subject that will drive the types of content that will be generated.  
-- Artifact Types: Every piece of content generated in RevelryAI has a type, which determines the purpose, format, and types of prompt used in generating the thing. Users define their own prompt template types based on their needs.
-- Prompt templates / Prompt / Template: A re-usable template that contains both dynamic and static data. When the user is generating an artifact, this is what they will interact with, and that collaboration is what is sent to the LLM. Prompt templates are grouped by the type of artifact selected.
+- Artifact Types: Every piece of content generated in RevelryAI has a type, which determines the purpose, format, and skills used in generating the thing. Users define their own artifact types based on their needs.
+- Skills: A re-usable definition of how content is generated, containing both dynamic and static data — a prompt with custom variables, document queries, and tool configuration. When the user is generating an artifact, this is what they will interact with, and that collaboration is what is sent to the LLM. Skills are grouped by the type of artifact selected.
 
 
 ## Contributing and Development
