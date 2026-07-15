@@ -37,13 +37,13 @@ defmodule RevelryAI.V2.ArtifactTest do
       assert Artifact.create(params, config) == response
     end
 
-    test "creates an artifact with a deprecated prompt_template_id and optional params", %{
+    test "passes through optional params", %{
       config: config,
       project_id: project_id,
       inputs: inputs
     } do
       params = %{
-        prompt_template_id: 2,
+        skill_id: 10,
         project_id: project_id,
         inputs: inputs,
         name: "My Artifact",
@@ -55,14 +55,14 @@ defmodule RevelryAI.V2.ArtifactTest do
       response = {:ok, %{status: "ok", response: %{"api_async_create_event_id" => "some-uuid"}}}
 
       expect(Client, :api_post, fn ^full_url, body, ^config ->
-        assert body == %{prompt_template_id: 2, inputs: inputs, name: "My Artifact", model_configuration_id: 5}
+        assert body == %{skill_id: 10, inputs: inputs, name: "My Artifact", model_configuration_id: 5}
         response
       end)
 
       assert Artifact.create(params, config) == response
     end
 
-    test "raises when neither skill_id nor prompt_template_id is given", %{
+    test "raises when skill_id is missing", %{
       config: config,
       project_id: project_id,
       inputs: inputs

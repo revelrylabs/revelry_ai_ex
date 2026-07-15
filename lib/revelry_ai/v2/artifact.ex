@@ -28,9 +28,7 @@ defmodule RevelryAI.V2.Artifact do
     - `project_id` (required): the ID of the project the artifact belongs to
     - `inputs` (required): a list of `%{name: name, value: value}` maps
       matching the skill's custom variables
-    - `skill_id`: the ID of the skill to run (required unless
-      `prompt_template_id` is given)
-    - `prompt_template_id` (deprecated): use `skill_id` instead
+    - `skill_id` (required): the ID of the skill to run
     - `name` (optional): a name for the artifact; auto-generated when absent
     - `model_configuration_id` (optional): overrides the organization's
       default model configuration
@@ -61,18 +59,16 @@ defmodule RevelryAI.V2.Artifact do
   """
   @spec create(
           %{
+            required(:skill_id) => integer(),
             required(:project_id) => integer(),
             required(:inputs) => [%{name: String.t(), value: String.t()}],
-            optional(:skill_id) => integer(),
-            optional(:prompt_template_id) => integer(),
             optional(:name) => String.t(),
             optional(:model_configuration_id) => integer()
           },
           Keyword.t()
         ) :: {:ok, map()} | {:error, term()}
-  def create(%{project_id: project_id, inputs: inputs} = params, config \\ [])
-      when is_integer(project_id) and is_list(inputs) and
-             (is_map_key(params, :skill_id) or is_map_key(params, :prompt_template_id)) do
+  def create(%{skill_id: skill_id, project_id: project_id, inputs: inputs} = params, config \\ [])
+      when is_integer(skill_id) and is_integer(project_id) and is_list(inputs) do
     config = Config.resolve_config(config)
     endpoint = url(config) <> "?project_id=#{project_id}"
     body = Map.delete(params, :project_id)
