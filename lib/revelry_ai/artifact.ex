@@ -83,15 +83,23 @@ defmodule RevelryAI.Artifact do
 
   ## Parameters
 
-  - `params`: The parameters for the artifact request.
+  - `artifact_slug`: the slug which defines the type of artifact to create
+  - `project_id`: the ID of the project the artifact belongs to
+  - `params`: the request body:
+    - `skill_id` (required): the ID of the skill to run
+    - `inputs` (required): a list of `%{name: name, value: value}` maps
+      matching the skill's custom variables
+    - `fire_and_forget` (optional): return immediately and deliver the
+      completed artifact via webhook
+    - `name` (optional): a name for the artifact; auto-generated when absent
+    - `model_configuration_id` (optional): overrides the organization's
+      default model configuration
   - `config` (optional): a configuration map used to override default config values
 
   ## Examples
 
-      iex> RevelryAI.Artifact.create(%{
+      iex> RevelryAI.Artifact.create("story", 1, %{
       ...>   skill_id: 2,
-      ...>   artifact_slug: "story",
-      ...>   project_id: 1,
       ...>   inputs: [
       ...>     %{name: "Context", value: "this is a test"}
       ...>   ],
@@ -100,10 +108,10 @@ defmodule RevelryAI.Artifact do
       {:ok, %{"artifact_id" => 123, "status" => "created"}}
   """
   @spec create(
+          String.t(),
+          integer(),
           %{
             required(:skill_id) => integer(),
-            required(:artifact_slug) => String.t(),
-            required(:project_id) => integer(),
             required(:inputs) => list(),
             optional(:fire_and_forget) => boolean(),
             optional(:name) => String.t(),
@@ -111,16 +119,12 @@ defmodule RevelryAI.Artifact do
           },
           Keyword.t()
         ) :: {:ok, map()} | {:error, term()}
-  def create(
-        %{skill_id: skill_id, artifact_slug: artifact_slug, project_id: project_id, inputs: inputs} = params,
-        config \\ []
-      )
-      when is_integer(skill_id) and is_binary(artifact_slug) and is_integer(project_id) and is_list(inputs) do
+  def create(artifact_slug, project_id, %{skill_id: skill_id, inputs: inputs} = params, config \\ [])
+      when is_binary(artifact_slug) and is_integer(project_id) and is_integer(skill_id) and is_list(inputs) do
     config = Config.resolve_config(config)
     url = url(config)
     path = "/#{artifact_slug}/artifacts?project_id=#{project_id}"
-    body = Map.drop(params, [:artifact_slug, :project_id])
-    Client.api_post(url <> path, body, config)
+    Client.api_post(url <> path, params, config)
   end
 
   @doc """
@@ -243,27 +247,26 @@ defmodule RevelryAI.Artifact do
 
   ## Parameters
 
-  - `params`: The parameters for the artifact creation request.
+  - `artifact_slug`: the slug which defines the type of artifact to create
+  - `project_id`: the ID of the project the artifact belongs to
+  - `params`: the request body, as in `create/4`
   - `config`: The configuration map containing the API key and endpoint URL.
 
   ## Example
 
-      iex> RevelryAI.Artifact.stream_create_artifact(%{
+      iex> RevelryAI.Artifact.stream_create_artifact("story", 1, %{
       ...>   skill_id: 2,
-      ...>   project_id: 1,
-      ...>   artifact_slug: "story",
       ...>   inputs: [
       ...>     %{name: "Context", value: "this is a test"}
       ...>   ]
       ...> })
   """
-  @spec stream_create_artifact(map, Keyword.t()) :: {:ok, map} | {:error, any}
-  def stream_create_artifact(params, config \\ []) do
+  @spec stream_create_artifact(String.t(), integer(), map, Keyword.t()) :: Enumerable.t() | {:error, any}
+  def stream_create_artifact(artifact_slug, project_id, %{skill_id: skill_id, inputs: inputs} = params, config \\ [])
+      when is_binary(artifact_slug) and is_integer(project_id) and is_integer(skill_id) and is_list(inputs) do
     config = Config.resolve_config(config)
-    %{artifact_slug: artifact_slug, skill_id: skill_id, project_id: project_id} = params
     endpoint = url(config) <> "/#{artifact_slug}/artifacts/stream?project_id=#{project_id}"
-    inputs = Map.get(params, :inputs, [])
-    body = %{skill_id: skill_id, inputs: inputs, stream: true}
+    body = Map.put(params, :stream, true)
     Client.api_post(endpoint, body, config)
   end
 end

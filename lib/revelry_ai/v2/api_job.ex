@@ -2,7 +2,7 @@ defmodule RevelryAI.V2.ApiJob do
   @moduledoc """
   Handles polling of asynchronous API jobs for the RevelryAI v2 API.
 
-  Jobs are created by async v2 endpoints such as `RevelryAI.V2.Skill.run/3`
+  Jobs are created by async v2 endpoints such as `RevelryAI.V2.Skill.run/4`
   and progress from `"pending"` to `"running"` to either `"completed"` or
   `"failed"`. Once completed, the job's `"content"` holds the AI output; on
   failure, `"error_message"` describes what went wrong.

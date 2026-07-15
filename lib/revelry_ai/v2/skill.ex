@@ -21,8 +21,8 @@ defmodule RevelryAI.V2.Skill do
   ## Parameters
 
   - `skill_id`: the ID of the skill to run
-  - `params`: the parameters for the skill run request:
-    - `project_id` (required): the ID of the project to run the skill in
+  - `project_id`: the ID of the project to run the skill in
+  - `params`: the request body:
     - `inputs` (required): a list of `%{name: name, value: value}` maps
       matching the skill's custom variables
     - `model_configuration_id` (optional): overrides the organization's
@@ -31,8 +31,7 @@ defmodule RevelryAI.V2.Skill do
 
   ## Example
 
-      iex> RevelryAI.V2.Skill.run(10, %{
-      ...>   project_id: 1,
+      iex> RevelryAI.V2.Skill.run(10, 1, %{
       ...>   inputs: [
       ...>     %{name: "Context", value: "this is a test"}
       ...>   ]
@@ -54,18 +53,17 @@ defmodule RevelryAI.V2.Skill do
   """
   @spec run(
           integer(),
+          integer(),
           %{
-            required(:project_id) => integer(),
             required(:inputs) => [%{name: String.t(), value: String.t()}],
             optional(:model_configuration_id) => integer()
           },
           Keyword.t()
         ) :: {:ok, map()} | {:error, term()}
-  def run(skill_id, %{project_id: project_id, inputs: inputs} = params, config \\ [])
+  def run(skill_id, project_id, %{inputs: inputs} = params, config \\ [])
       when is_integer(skill_id) and is_integer(project_id) and is_list(inputs) do
     config = Config.resolve_config(config)
     endpoint = url(config) <> "/#{skill_id}/run?project_id=#{project_id}"
-    body = Map.delete(params, :project_id)
-    Client.api_post(endpoint, body, config)
+    Client.api_post(endpoint, params, config)
   end
 end

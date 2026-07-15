@@ -33,7 +33,7 @@ defmodule RevelryAI.ArtifactTest do
     end
   end
 
-  describe "create/2" do
+  describe "create/4" do
     test "creates an artifact with the given parameters", %{
       config: config,
       project_id: project_id,
@@ -42,9 +42,7 @@ defmodule RevelryAI.ArtifactTest do
       params = %{
         skill_id: 2,
         inputs: [%{name: "Context", value: "this is a test"}],
-        fire_and_forget: true,
-        artifact_slug: artifact_slug,
-        project_id: project_id
+        fire_and_forget: true
       }
 
       full_url = "#{config[:api_url]}/api/v1/artifact_types/#{artifact_slug}/artifacts?project_id=#{project_id}"
@@ -53,33 +51,26 @@ defmodule RevelryAI.ArtifactTest do
 
       expect(Client, :api_post, fn url, body, opts ->
         assert url == full_url
-        assert body == %{skill_id: 2, inputs: params.inputs, fire_and_forget: true}
+        assert body == params
         assert opts == config
         response
       end)
 
-      assert Artifact.create(params, config) == response
+      assert Artifact.create(artifact_slug, project_id, params, config) == response
     end
 
     test "raises when skill_id is missing", %{config: config, project_id: project_id, artifact_slug: artifact_slug} do
-      params = %{
-        inputs: [%{name: "Context", value: "this is a test"}],
-        artifact_slug: artifact_slug,
-        project_id: project_id
-      }
+      params = %{inputs: [%{name: "Context", value: "this is a test"}]}
 
       assert_raise FunctionClauseError, fn ->
-        Artifact.create(params, config)
+        Artifact.create(artifact_slug, project_id, params, config)
       end
     end
 
     test "creates an artifact with streaming", %{config: config, project_id: project_id, artifact_slug: artifact_slug} do
       params = %{
         skill_id: 2,
-        inputs: [%{name: "Context", value: "this is a streaming test"}],
-        stream: true,
-        artifact_slug: artifact_slug,
-        project_id: project_id
+        inputs: [%{name: "Context", value: "this is a streaming test"}]
       }
 
       full_url = "#{config[:api_url]}/api/v1/artifact_types/#{artifact_slug}/artifacts/stream?project_id=#{project_id}"
@@ -98,11 +89,12 @@ defmodule RevelryAI.ArtifactTest do
         }
       ]
 
-      expect(Client, :api_post, fn ^full_url, %{stream: true}, ^config ->
+      expect(Client, :api_post, fn ^full_url, body, ^config ->
+        assert body == Map.put(params, :stream, true)
         mock_stream
       end)
 
-      result_stream = Artifact.stream_create_artifact(params, config)
+      result_stream = Artifact.stream_create_artifact(artifact_slug, project_id, params, config)
       assert result_stream == mock_stream
     end
   end

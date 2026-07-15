@@ -18,51 +18,48 @@ defmodule RevelryAI.V2.SkillTest do
     }
   end
 
-  describe "run/3" do
+  describe "run/4" do
     test "runs a skill asynchronously", %{
       config: config,
       skill_id: skill_id,
       project_id: project_id,
       inputs: inputs
     } do
+      params = %{inputs: inputs}
       full_url = "#{config[:api_url]}/api/v2/skills/#{skill_id}/run?project_id=#{project_id}"
 
       response = {:ok, %{status: "ok", response: %{"api_job_id" => 42, "message" => "Skill execution started."}}}
 
-      expect(Client, :api_post, fn ^full_url, body, ^config ->
-        assert body == %{inputs: inputs}
-        response
-      end)
+      expect(Client, :api_post, fn ^full_url, ^params, ^config -> response end)
 
-      assert Skill.run(skill_id, %{project_id: project_id, inputs: inputs}, config) == response
+      assert Skill.run(skill_id, project_id, params, config) == response
     end
 
-    test "passes through an optional model_configuration_id", %{
+    test "passes params through as the body verbatim", %{
       config: config,
       skill_id: skill_id,
       project_id: project_id,
       inputs: inputs
     } do
+      params = %{inputs: inputs, model_configuration_id: 5}
       full_url = "#{config[:api_url]}/api/v2/skills/#{skill_id}/run?project_id=#{project_id}"
 
-      expect(Client, :api_post, fn ^full_url, body, ^config ->
-        assert body == %{inputs: inputs, model_configuration_id: 5}
+      expect(Client, :api_post, fn ^full_url, ^params, ^config ->
         {:ok, %{status: "ok", response: %{"api_job_id" => 42}}}
       end)
 
-      params = %{project_id: project_id, inputs: inputs, model_configuration_id: 5}
-      assert {:ok, _} = Skill.run(skill_id, params, config)
+      assert {:ok, _} = Skill.run(skill_id, project_id, params, config)
     end
 
     test "raises when skill_id is not an integer", %{config: config, project_id: project_id, inputs: inputs} do
       assert_raise FunctionClauseError, fn ->
-        Skill.run("10", %{project_id: project_id, inputs: inputs}, config)
+        Skill.run("10", project_id, %{inputs: inputs}, config)
       end
     end
 
     test "raises when inputs are missing", %{config: config, skill_id: skill_id, project_id: project_id} do
       assert_raise FunctionClauseError, fn ->
-        Skill.run(skill_id, %{project_id: project_id}, config)
+        Skill.run(skill_id, project_id, %{}, config)
       end
     end
   end

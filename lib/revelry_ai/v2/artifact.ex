@@ -24,11 +24,11 @@ defmodule RevelryAI.V2.Artifact do
 
   ## Parameters
 
-  - `params`: the parameters for the artifact request:
-    - `project_id` (required): the ID of the project the artifact belongs to
+  - `project_id`: the ID of the project the artifact belongs to
+  - `params`: the request body:
+    - `skill_id` (required): the ID of the skill to run
     - `inputs` (required): a list of `%{name: name, value: value}` maps
       matching the skill's custom variables
-    - `skill_id` (required): the ID of the skill to run
     - `name` (optional): a name for the artifact; auto-generated when absent
     - `model_configuration_id` (optional): overrides the organization's
       default model configuration
@@ -36,9 +36,8 @@ defmodule RevelryAI.V2.Artifact do
 
   ## Example
 
-      iex> RevelryAI.V2.Artifact.create(%{
+      iex> RevelryAI.V2.Artifact.create(1, %{
       ...>   skill_id: 10,
-      ...>   project_id: 1,
       ...>   inputs: [
       ...>     %{name: "Context", value: "this is a test"}
       ...>   ]
@@ -58,20 +57,19 @@ defmodule RevelryAI.V2.Artifact do
   The completed artifact is delivered via webhook.
   """
   @spec create(
+          integer(),
           %{
             required(:skill_id) => integer(),
-            required(:project_id) => integer(),
             required(:inputs) => [%{name: String.t(), value: String.t()}],
             optional(:name) => String.t(),
             optional(:model_configuration_id) => integer()
           },
           Keyword.t()
         ) :: {:ok, map()} | {:error, term()}
-  def create(%{skill_id: skill_id, project_id: project_id, inputs: inputs} = params, config \\ [])
-      when is_integer(skill_id) and is_integer(project_id) and is_list(inputs) do
+  def create(project_id, %{skill_id: skill_id, inputs: inputs} = params, config \\ [])
+      when is_integer(project_id) and is_integer(skill_id) and is_list(inputs) do
     config = Config.resolve_config(config)
     endpoint = url(config) <> "?project_id=#{project_id}"
-    body = Map.delete(params, :project_id)
-    Client.api_post(endpoint, body, config)
+    Client.api_post(endpoint, params, config)
   end
 end

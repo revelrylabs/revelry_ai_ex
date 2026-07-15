@@ -110,14 +110,12 @@ and returns the artifact:
 ```elixir
 params = %{
   skill_id: 2,
-  artifact_slug: "story",
-  project_id: 1,
   inputs: [
     %{name: "Context", value: "this is a test"}
   ]
 }
 
-RevelryAI.Artifact.create(params)
+RevelryAI.Artifact.create("story", 1, params)
 #=> {:ok, %{status: "ok", response: %{"artifact" => %{"id" => 123, "content" => "...", ...}, "url" => "..."}}}
 ```
 
@@ -140,18 +138,16 @@ RevelryAI.Artifact.refine_artifact(%{
 
 ### Streaming (v1)
 
-`stream_create_artifact/2` and `stream_refine_artifact/2` return an Elixir
+`stream_create_artifact/4` and `stream_refine_artifact/2` return an Elixir
 stream that yields content chunks (strings) as they are generated, followed by
 a final map containing the full response:
 
 ```elixir
-%{
+"story"
+|> RevelryAI.Artifact.stream_create_artifact(1, %{
   skill_id: 2,
-  artifact_slug: "story",
-  project_id: 1,
   inputs: [%{name: "Context", value: "this is a test"}]
-}
-|> RevelryAI.Artifact.stream_create_artifact()
+})
 |> Enum.each(fn
   chunk when is_binary(chunk) -> IO.write(chunk)
   %{"response" => %{"artifact" => artifact}} -> IO.inspect(artifact["id"], label: "artifact id")
@@ -175,19 +171,18 @@ on the endpoint:
 
 | Endpoint | Returns immediately with | Get the result via |
 |---|---|---|
-| `RevelryAI.V2.Skill.run/3` | `api_job_id` | polling `RevelryAI.V2.ApiJob` |
-| `RevelryAI.V2.Artifact.create/2` | `api_async_create_event_id` | webhook |
+| `RevelryAI.V2.Skill.run/4` | `api_job_id` | polling `RevelryAI.V2.ApiJob` |
+| `RevelryAI.V2.Artifact.create/3` | `api_async_create_event_id` | webhook |
 
 #### Run a skill and poll for the result
 
-`RevelryAI.V2.Skill.run/3` starts the skill and returns an `api_job_id`. The
+`RevelryAI.V2.Skill.run/4` starts the skill and returns an `api_job_id`. The
 job moves through `"pending"` → `"running"` → `"completed"` or `"failed"`.
 `RevelryAI.V2.ApiJob.await/2` polls until the job reaches a terminal status:
 
 ```elixir
 {:ok, %{response: %{"api_job_id" => api_job_id}}} =
-  RevelryAI.V2.Skill.run(10, %{
-    project_id: 1,
+  RevelryAI.V2.Skill.run(10, 1, %{
     inputs: [
       %{name: "Context", value: "this is a test"}
     ]
@@ -227,7 +222,7 @@ job["error_message"] #=> the failure reason, if failed
 
 #### Create an artifact asynchronously
 
-`RevelryAI.V2.Artifact.create/2` returns an `api_async_create_event_id`. The
+`RevelryAI.V2.Artifact.create/3` returns an `api_async_create_event_id`. The
 completed artifact is **not** available through `RevelryAI.V2.ApiJob` — it is
 delivered to your team's configured webhook, whose payload includes the
 `artifact_id`, `chat_id`, and the same `api_async_create_event_id` so you can
@@ -235,9 +230,8 @@ correlate it with your request:
 
 ```elixir
 {:ok, %{response: %{"api_async_create_event_id" => event_id}}} =
-  RevelryAI.V2.Artifact.create(%{
+  RevelryAI.V2.Artifact.create(1, %{
     skill_id: 10,
-    project_id: 1,
     inputs: [
       %{name: "Context", value: "this is a test"}
     ]
