@@ -24,7 +24,7 @@ defmodule RevelryAI.MixProject do
       docs: [
         main: "readme",
         logo: "revelry-logo.png",
-        extras: ["README.md", "LICENSE", "CONTRIBUTING.md", "RELEASES.md", "CODE_OF_CONDUCT.md"]
+        extras: ["README.md", "CHANGELOG.md", "LICENSE", "CONTRIBUTING.md", "RELEASES.md", "CODE_OF_CONDUCT.md"]
       ]
     ]
   end
